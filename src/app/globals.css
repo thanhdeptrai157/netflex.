@@ -1,5 +1,4 @@
 @import "tailwindcss";
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,6 +9,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --gradient-blue-purple: linear-gradient(to right, #ec4899, #7e22ce);
+  --gradient-red-orange: linear-gradient(to right, #ef4444, #f59e0b);
+  --green-yellow: #B0E633;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +24,20 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
 }
+
+@layer components {
+  .bg-gradient-blue-purple {
+    background: var(--gradient-blue-purple);
+  }
+
+  .bg-gradient-red-orange {
+    background: var(--gradient-red-orange);
+  }
+
+  .text-green-yellow {
+    color: var(--green-yellow);
+  }
+}
+
