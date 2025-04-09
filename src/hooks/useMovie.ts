@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "../configs/axios";
 import MovieService from "@/services/movieService" ;
 import { APP_DOMAIN_CDN_IMAGE } from "@/configs/env";
 import { Movie } from "@/types/movie";
