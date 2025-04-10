@@ -28,7 +28,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="bg-slate-950 w-full h-[70px] flex items-center px-[4%] relative z-50 text-white md:h-[60px]">
+    <header className="bg-slate-950 fixed top-0 left-0 w-full h-[70px] flex items-center px-[4%] z-50 text-white md:h-[60px] ">
       <span className="mr-[5%]">
         <a href="/" className="cursor-pointer">
           <img

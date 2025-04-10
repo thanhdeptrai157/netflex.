@@ -1,14 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora&display=swap');
 @import "tailwindcss";
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --font-lora: 'Lora', serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-lora); 
+  --font-mono: var(--font-lora); 
   --gradient-blue-purple: linear-gradient(to right, #ec4899, #7e22ce);
   --gradient-red-orange: linear-gradient(to right, #ef4444, #f59e0b);
   --green-yellow: #B0E633;
@@ -24,22 +29,22 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+  font-family: var(--font-sans, 'Lora', serif);
   padding: 0;
   margin: 0;
 }
 
+
 @layer components {
   .bg-gradient-blue-purple {
-    background: var(--gradient-blue-purple);
+    background: var(--gradient-blue-purple) !important;
   }
 
   .bg-gradient-red-orange {
-    background: var(--gradient-red-orange);
+    background: var(--gradient-red-orange) !important;
   }
 
   .text-green-yellow {
-    color: var(--green-yellow);
+    color: var(--green-yellow) !important;
   }
 }
-

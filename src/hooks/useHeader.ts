@@ -16,7 +16,6 @@ export const useHeader = () => {
             if(countries.length > 0) return;
             try {
                 const response = await CountryService.getAllCountries() as Country[];
-                console.log(response);
                 setCountries(response);
             } catch (err) {
                 setError("Failed to fetch countries");
