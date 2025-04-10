@@ -9,8 +9,9 @@ export type Movie = {
     quality: string;
     lang: string;
     year: string;
-
 }
+
+
 export type MovieDetail = {
     _id: string;
     name: string;

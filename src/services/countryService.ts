@@ -24,3 +24,10 @@ export const getMoviesByCountry = async (slug: string, page: number = 1, limit: 
         throw error;
     }
 }
+
+const CountryService = {
+    getAllCountries,
+    getMoviesByCountry
+}
+
+export default CountryService;
