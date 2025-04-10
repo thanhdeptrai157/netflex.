@@ -5,6 +5,7 @@ import DropdownMenu from "@/components/dropdown-menu";
 import SeachBar from "./search-bar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faUser, faX } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 const Header = () => {
   const { categories, countries } = useHeader();
@@ -30,21 +31,12 @@ const Header = () => {
   return (
     <header className="bg-slate-950 fixed top-0 left-0 w-full h-[70px] flex items-center px-[4%] z-50 text-white md:h-[60px] ">
       <span className="mr-[5%]">
-        <a href="/" className="cursor-pointer">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="h-[40px] hidden lg:block"
-          />
-          <img
-            src="/logo-small.png"
-            alt="Logo"
-            className="h-[40px] lg:hidden"
-          />
-        </a>
+        <Link href="/" className="cursor-pointer">
+          <img src="/logo.png" alt="Logo" className="h-[40px] hidden lg:block" />
+          <img src="/logo-small.png" alt="Logo" className="h-[40px] lg:hidden" />
+        </Link>
       </span>
 
-      {/* Sidebar cho mobile */}
       <div
         ref={sidebarRef}
         className={`w-[250px] bg-slate-950 h-screen fixed top-0 left-0 z-50 transform transition-transform duration-300 ease-in-out lg:hidden
@@ -59,81 +51,44 @@ const Header = () => {
         </div>
 
         <nav className="flex flex-col gap-4 p-4 transition-colors duration-300">
-          <a href="/" className="hover:text-red-600">
-            Trang chủ
-          </a>
-          <a href="/phim-le" className="hover:text-red-600">
-            Phim Lẻ
-          </a>
-          <a href="/phim-bo" className="hover:text-red-600">
-            Phim Bộ
-          </a>
-          <a href="/tv-shows" className="hover:text-red-600">
-            TV Shows
-          </a>
+          <Link href="/" className="hover:text-red-600">Trang chủ</Link>
+          <Link href="/phim-le" className="hover:text-red-600">Phim Lẻ</Link>
+          <Link href="/phim-bo" className="hover:text-red-600">Phim Bộ</Link>
+          <Link href="/tv-shows" className="hover:text-red-600">TV Shows</Link>
         </nav>
       </div>
 
-      {/* overlay */}
+
       <div
-        className={`
-          fixed inset-0 bg-black/50 z-40 lg:hidden
-          transition-opacity duration-300
-          ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
+        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300
+        ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
         `}
-        
       ></div>
 
-
       <nav className="items-center space-x-5 hidden lg:flex">
-        <a href="/" className="hover:text-red-600 cursor-pointer">
-          Trang chủ
-        </a>
-        <a href="/phim-le" className="hover:text-red-600 cursor-pointer">
-          Phim Lẻ
-        </a>
-        <a href="/phim-bo" className="hover:text-red-600 cursor-pointer">
-          Phim Bộ
-        </a>
-        <a href="/tv-shows" className="hover:text-red-600 cursor-pointer">
-          TV Shows
-        </a>
+        <Link href="/" className="hover:text-red-600 cursor-pointer">Trang chủ</Link>
+        <Link href="/phim-le" className="hover:text-red-600 cursor-pointer">Phim Lẻ</Link>
+        <Link href="/phim-bo" className="hover:text-red-600 cursor-pointer">Phim Bộ</Link>
+        <Link href="/tv-shows" className="hover:text-red-600 cursor-pointer">TV Shows</Link>
 
         {categories.length > 0 && (
-          <DropdownMenu
-            label="Thể loại"
-            items={categories}
-            hrefBase="/the-loai"
-          />
+          <DropdownMenu label="Thể loại" items={categories} hrefBase="/the-loai" />
         )}
         {countries.length > 0 && (
-          <DropdownMenu
-            label="Quốc gia"
-            items={countries}
-            hrefBase="/quoc-gia"
-          />
+          <DropdownMenu label="Quốc gia" items={countries} hrefBase="/quoc-gia" />
         )}
       </nav>
-
 
       <div className="ml-auto flex items-center">
         <SeachBar />
         <div className="lg:hidden ml-2">
           <button onClick={() => setOpen(!open)}>
-            <FontAwesomeIcon
-              icon={faBars}
-              className="text-white cursor-pointer"
-              size="lg"
-            />
+            <FontAwesomeIcon icon={faBars} className="text-white cursor-pointer" size="lg" />
           </button>
         </div>
         <div className="hidden lg:flex ml-2">
           <button>
-            <FontAwesomeIcon
-              icon={faUser}
-              className="text-white cursor-pointer"
-              size="lg"
-            />
+            <FontAwesomeIcon icon={faUser} className="text-white cursor-pointer" size="lg" />
           </button>
         </div>
       </div>

@@ -1,15 +1,17 @@
 "use client";
-import Header from "@/components/header";
-import MovieCard from "@/components/movie-card";
+import NewUpdateMovie from "@/components/new-update-movie";
 import Slider from "@/components/slider";
-import { useMovie } from "@/hooks/useMovie";
-import { Movie } from "@/types/movie";
 
 export default function Home() {
 
   return (
-    <div className="flex flex-wrap gap-5 bg-slate-900 justify-center h-fit lg:px-20 py-20 ">
-      <Slider />
+    <div className="flex flex-wrap gap-5 bg-slate-900  h-fit px-3 sm:px-4 lg:px-6 py-20 ">
+        <Slider />
+        <NewUpdateMovie />
+        {/* <div className="flex gap-6 ">
+          <SeriesMovie />
+          
+        </div> */}
     </div>
   );
 }

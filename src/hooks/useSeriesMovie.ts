@@ -1,25 +1,21 @@
-import { APP_DOMAIN_CDN_IMAGE } from "@/configs/env";
-import MovieService from "@/services/movieService";
-import { Movie, MovieDetail } from "@/types/movie";
 import { useEffect, useState } from "react";
-
-// slider cho các phim mới năm hiện tại
-export const useSlider = () => {
-    const [movies, setMovies] = useState<MovieDetail[]>([]);
+import MovieService from "@/services/movieService" ;
+import { APP_DOMAIN_CDN_IMAGE } from "@/configs/env";
+import { Movie } from "@/types/movie";
+export const useSeriesMovie = () => {
+    const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const currentYear = new Date().getFullYear(); 
-                const data = await MovieService.getMoviesByYear(currentYear) as { status: string; data: { items: MovieDetail[] } };
-                
+                const data = await MovieService.getSeriesMovies() as { status: string; data: { items: Movie[] } };
                 if (data.status === "success") {
-                    const updatedMovies = data.data.items.slice(0, 9).map((item: MovieDetail) => ({
+                    const updatedMovies = data.data.items.map((item: Movie) => ({
                         ...item,
                         poster_url: item.poster_url?.startsWith(APP_DOMAIN_CDN_IMAGE ? APP_DOMAIN_CDN_IMAGE: "") ? item.poster_url : APP_DOMAIN_CDN_IMAGE + item.poster_url,
-                        thumb_url: item.thumb_url?.startsWith(APP_DOMAIN_CDN_IMAGE ? APP_DOMAIN_CDN_IMAGE: "") ? item.thumb_url : APP_DOMAIN_CDN_IMAGE + item.thumb_url,
+                        
                     }));
                     setMovies(updatedMovies);
                 } else {
@@ -34,5 +30,7 @@ export const useSlider = () => {
 
         fetchMovies();
     }, []);
+    
     return { movies, loading, error };
 };
+

@@ -1,12 +1,23 @@
+"use client"
 import { Movie } from '@/types/movie';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useRouter } from 'next/navigation';
 import React from 'react'
 
 // item for each movie
 const MovieCard = ({ movie }: { movie: Movie }) => {
+
+    const router = useRouter();
+
+    const handleNavigate = () => {
+        router.push(`/movie/${movie.slug}`);
+    }
+
   return (
-    <div className='text-center rounded-xl bg-slate-800 overflow-hidden w-[40%] sm:w-[30%] md:w-[22%] lg:w-[18%] xl:w-[15%]' >
+    // <div className='text-center rounded-xl bg-slate-800 overflow-hidden w-[190px] sm:w-[190px] md:w-[170px] lg:w-[170px] xl:w-[200px]' >
+    <div className='text-center rounded-xl bg-slate-800 overflow-hidden w-[45%] sm:w-[30%] md:w-[22%] lg:w-[18%] xl:w-[15%]' 
+    onClick={handleNavigate}>
       <div className='w-full overflow-hidden cursor-pointer relative group'>
         <div className='absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10'>
           <button className='text-white w-[50px] h-[50px] text-[14px] rounded-full border border-white mr-5 ml-5'>

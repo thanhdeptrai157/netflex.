@@ -54,7 +54,7 @@ const Slider = () => {
     const movie = movies[currentIndex];
 
     return (
-        <div className="w-full rounded-xl overflow-hidden relative text-white transition-all duration-300 aspect-[4/2]">
+        <div className="w-full rounded-xl overflow-hidden relative text-white transition-all duration-300 h-full aspect-[4/2]">
             <AnimatePresence initial={false} custom={direction}>
                 <motion.img
                     key={movie._id}
@@ -73,7 +73,7 @@ const Slider = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/40 z-10" />
 
             <div className="absolute top-1/2 -translate-y-1/2 left-10 sm:left-20 z-20 max-w-[90%] sm:max-w-[70%] md:max-w-[50%]">
-                <h2 className="text-green-yellow font-black text-sm sm:text-3xl md:text-4xl mb-2">{movie.name}</h2>
+                <h2 className="text-green-yellow font-black text-sm sm:text-2xl md:text-3xl mb-2 lg:text-4xl">{movie.name}</h2>
                 <p className="text-white hidden sm:block sm:text-xl md:text-2xl font-semibold mb-4">
                     {movie.origin_name}
                 </p>
