@@ -47,4 +47,13 @@ body {
   .text-green-yellow {
     color: var(--green-yellow) !important;
   }
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; 
+  }
+  
 }

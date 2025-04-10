@@ -2,11 +2,9 @@
 import { useMovie } from '@/hooks/useMovie'
 import React from 'react'
 
-interface Props {
-    slug: string
-}
 
-const MovieDetail = ({ slug }: Props) => {
+
+const MovieDetail = ({slug}: {slug : string}) => {
     const { loading, error, data } = useMovie(slug)
     const movie = data?.movie
     const episodes = data?.episodes
@@ -56,7 +54,7 @@ const MovieDetail = ({ slug }: Props) => {
                     <div className="w-full">
                         <h4 className="text-xl font-semibold mb-3 text-green-yellow">Danh sách tập phim</h4>
                         <div className="bg-gray-800 p-4 rounded-xl max-h-[300px] overflow-y-auto">
-                            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3  hide-scrollbar ">
                                 {episodes?.[0]?.server_data?.map((ep: any, index: number) => (
                                     <div
                                         key={index}
