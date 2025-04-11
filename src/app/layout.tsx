@@ -34,7 +34,7 @@ export default function RootLayout({
         style={{ fontFamily: "var(--font-lora)" }} 
       >
         <Header />
-        <div className="px-3 md:px-7 lg:px-15 bg-slate-800">
+        <div className="px-3 md:px-5 lg:px-10 bg-slate-800">
           {children}
         </div>
       </body>

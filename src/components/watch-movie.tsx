@@ -25,25 +25,28 @@ const LoadMovie = ({ slug }: { slug: string }) => {
     }, [currentEpisode])
 
     return (
-        <div className="w-full flex flex-col gap-6 lg:flex-row">
-            <div className="w-full lg:w-[58%] flex flex-col gap-4">
-                <div className=" rounded-2xl overflow-hidden shadow-lg border border-gray-700">
+        <div className="w-full flex flex-col gap-3 lg:flex-row">
+            <div className="w-full lg:w-[75%] flex flex-col gap-3">
+                <div className="shadow-lg border border-gray-700">
                     <video
                         ref={videoRef}
                         controls
-                        className="w-full h-full object-cover bg-black"
+                        className="w-full h-full aspect-video object-contain bg-black"
                     />
                 </div>
 
                 {movieDetail?.content && (
+                    
                     <div className="bg-gray-800 p-4 rounded-xl shadow text-gray-300">
-                        <h3 className="text-lg font-semibold text-green-yellow mb-2">Nội dung</h3>
+                        <h2 className='text-2xl font-semibold text-green-yellow'>{movieDetail.name}</h2>
+                        <br></br>
+                        <h3 className="text-lg font-semibold text-white mb-2">Nội dung</h3>
                         <p className="text-sm leading-relaxed">{movieDetail.content}</p>
                     </div>
                 )}
             </div>
 
-            <div className="w-full lg:w-[42%]">
+            <div className="w-full lg:w-[30%]">
                 <EpisodeList episodes={episodes} name={slug} />
             </div>
         </div>

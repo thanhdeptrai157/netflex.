@@ -18,11 +18,11 @@ const MovieCard = ({ movie }: { movie: Movie }) => {
 
   return (
     // <div className='text-center rounded-xl bg-slate-800 overflow-hidden w-[190px] sm:w-[190px] md:w-[170px] lg:w-[170px] xl:w-[200px]' >
-    <div className='text-center rounded-xl bg-slate-800 overflow-hidden w-[45%] sm:w-[30%] md:w-[22%] lg:w-[18%] xl:w-[15%]' 
+    <div className='relative text-center rounded-xl bg-slate-800 overflow-hidden' 
     onClick={handleNavigate}>
       <div className='w-full overflow-hidden cursor-pointer relative group'>
         <div className='absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10'>
-          <button className='text-white w-[50px] h-[50px] text-[14px] rounded-full border border-white mr-5 ml-5'>
+          <button className='text-white w-[50px] h-[50px] text-[14px] rounded-full border border-white mr-5 ml-5 cursor-pointer'>
             <FontAwesomeIcon icon={faPlay} color='white' size='xl' />
           </button>
         </div>

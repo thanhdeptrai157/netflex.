@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Episode, EpisodeData } from '@/types/movie';
+import { Episode, EpisodeData, Movie } from '@/types/movie';
 import { useMovieStore } from '@/stores/movieStore';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -7,8 +7,7 @@ const EpisodeList = ({ episodes, name }: { episodes: Episode[]; name: string }) 
     const router = useRouter();
     const pathname = usePathname(); 
     const [selectedServerIndex, setSelectedServerIndex] = useState(0);
-    const { setEpisodes, setCurrentEpisode, currentEpisode } = useMovieStore();
-
+    const { setEpisodes, setCurrentEpisode, addWatchedMovie, currentEpisode, movieDetail } = useMovieStore();
     const handleSaveStore = (e: EpisodeData) => {
         setEpisodes(episodes);
         setCurrentEpisode(e);
@@ -17,6 +16,8 @@ const EpisodeList = ({ episodes, name }: { episodes: Episode[]; name: string }) 
         if (pathname !== watchPath) {
             router.push(watchPath);
         }
+        
+        addWatchedMovie(movieDetail as Movie)
     };
 
     const selectedServer = episodes?.[selectedServerIndex];
@@ -42,7 +43,7 @@ const EpisodeList = ({ episodes, name }: { episodes: Episode[]; name: string }) 
             </div>
 
             <div className="bg-gray-800 p-4 rounded-xl max-h-[300px] lg:max-h-[570px] overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
-                <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3 hide-scrollbar">
+                <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 hide-scrollbar">
                     {selectedServer?.server_data?.map((ep, epIndex) => (
                         <div
                             key={epIndex}

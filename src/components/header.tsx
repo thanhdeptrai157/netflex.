@@ -6,12 +6,13 @@ import SeachBar from "./search-bar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faUser, faX } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { useMovieStore } from "@/stores/movieStore";
+import RecentMovie from "./recent-movie";
 
 const Header = () => {
   const { categories, countries } = useHeader();
   const [open, setOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
-
   // Đóng sidebar khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -55,6 +56,10 @@ const Header = () => {
           <Link href="/phim-le" className="hover:text-red-600">Phim Lẻ</Link>
           <Link href="/phim-bo" className="hover:text-red-600">Phim Bộ</Link>
           <Link href="/tv-shows" className="hover:text-red-600">TV Shows</Link>
+          <h2 className="text-[16px] md:text-xl font-bold text-white">Phim Xem Gần Đây</h2>
+          <div className="max-h-[370px] overflow-scroll overflow-y-auto scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
+            <RecentMovie />
+          </div>
         </nav>
       </div>
 

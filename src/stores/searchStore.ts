@@ -9,7 +9,6 @@ interface SearchState {
     recentSearches: string[]; 
     recentMovies: Movie[]; 
     addSearch: (search: string) => void; 
-    setRecentMovies: (movies: Movie[]) => void; 
     clearSearches: () => void; 
 }
 
@@ -24,7 +23,6 @@ export const useSearchStore = create<SearchState>()(
                     return { recentSearches: updatedSearches };
                 });
             },
-            setRecentMovies: (movies) => set({ recentMovies: movies }),
             clearSearches: () => set({ recentSearches: [] }),
         }),
         {

@@ -26,7 +26,7 @@ const Search = () => {
             behavior: 'smooth',
         })
     }
-    
+
     return (
         <div className="min-h-screen bg-slate-900 px-3 sm:px-4 lg:px-6 py-20">
             <div className="text-white text-xl md:text-2xl font-semibold mb-6">
@@ -34,11 +34,11 @@ const Search = () => {
             </div>
 
             {loading && (
-                <div className="flex flex-wrap gap-5">
-                    {Array.from({ length: 12 }).map((_, idx) => (
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5 lg:gap-3 mt-5">
+                    {Array.from({ length: 10 }).map((_, idx) => (
                         <div
                             key={idx}
-                            className="w-[150px] h-[225px] bg-gray-700 rounded-md animate-pulse"
+                            className="relative bg-gray-700 rounded-md animate-pulse aspect-[2/3] w-full"
                         />
                     ))}
                 </div>
@@ -52,7 +52,7 @@ const Search = () => {
 
             {!loading && !error && (
                 <>
-                    <div className="flex flex-wrap gap-5">
+                    <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5 lg:gap-3 mt-5">
                         {currentItems.map((movie: Movie) => (
                             <MovieCard key={movie._id} movie={movie} />
                         ))}
@@ -64,8 +64,8 @@ const Search = () => {
                                 className="px-3 py-1 border border-gray-600 rounded hover:bg-gray-700 disabled:opacity-50"
                                 onClick={() => {
                                     scrollToTop()
-                                    setCurrentPage((p) => {    
-                                        const newPage = Math.max(1, p - 1) 
+                                    setCurrentPage((p) => {
+                                        const newPage = Math.max(1, p - 1)
                                         return newPage
                                     })
                                 }}
@@ -80,7 +80,7 @@ const Search = () => {
                                     scrollToTop()
                                     setCurrentPage((p) => {
                                         const newPage = Math.min(totalPages, p + 1)
-                                        
+
                                         return newPage
                                     })
                                 }}
@@ -95,7 +95,7 @@ const Search = () => {
         </div>
     )
 }
-const SearchPage = () =>{
+const SearchPage = () => {
     return (
         <Suspense>
             <Search />

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import MovieService from "@/services/movieService" ;
 import { APP_DOMAIN_CDN_IMAGE } from "@/configs/env";
 import { Movie } from "@/types/movie";
-export const useSeriesMovie = () => {
+export const useSeriesMovie = (num: number) => {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -10,7 +10,7 @@ export const useSeriesMovie = () => {
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const data = await MovieService.getSeriesMovies() as { status: string; data: { items: Movie[] } };
+                const data = await MovieService.getSeriesMovies(1, num) as { status: string; data: { items: Movie[] } };
                 if (data.status === "success") {
                     const updatedMovies = data.data.items.map((item: Movie) => ({
                         ...item,

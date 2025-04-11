@@ -32,7 +32,6 @@ const SearchBar = () => {
             (event.target as HTMLInputElement).value = '';
             addSearch(query)
             console.log(allSearchResults)
-            setRecentMovies(allSearchResults)
         }
     };
     // cài đặt timeout cho việc mở input
@@ -70,7 +69,7 @@ const SearchBar = () => {
     };
 
     // lưu store tìm kiếm gần nhất
-    const { recentSearches, addSearch, clearSearches, setRecentMovies } = useSearchStore()
+    const { recentSearches, addSearch, clearSearches } = useSearchStore()
 
     return (
         <div ref={dropdownRef} className="relative">
