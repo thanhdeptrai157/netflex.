@@ -10,7 +10,7 @@ export type Movie = {
     episode_current: string;
     quality: string;
     lang: string;
-    year: string;
+    year: number;
 }
 
 

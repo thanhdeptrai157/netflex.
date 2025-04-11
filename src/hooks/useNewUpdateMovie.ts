@@ -14,8 +14,8 @@ export const useNewUpdateMovie = () => {
                 if (data.status) {
                     const updatedMovies = data.items.map((item: MovieDetail) => ({
                         ...item,       
-                        poster_url: item.poster_url?.startsWith(APP_DOMAIN_CDN_IMAGE) ? item.poster_url : APP_DOMAIN_CDN_IMAGE + item.poster_url,
-                        thumb_url: item.thumb_url?.startsWith(APP_DOMAIN_CDN_IMAGE) ? item.thumb_url : APP_DOMAIN_CDN_IMAGE + item.thumb_url,
+                        poster_url: item.poster_url?.startsWith(APP_DOMAIN_CDN_IMAGE ? APP_DOMAIN_CDN_IMAGE : "") ? item.poster_url : APP_DOMAIN_CDN_IMAGE + item.poster_url,
+                        thumb_url: item.thumb_url?.startsWith(APP_DOMAIN_CDN_IMAGE ? APP_DOMAIN_CDN_IMAGE : "") ? item.thumb_url : APP_DOMAIN_CDN_IMAGE + item.thumb_url,
                     }));
                     setMovies(updatedMovies);
                 } else {
