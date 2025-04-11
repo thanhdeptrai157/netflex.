@@ -41,7 +41,7 @@ const EpisodeList = ({ episodes, name }: { episodes: Episode[]; name: string }) 
                 ))}
             </div>
 
-            <div className="bg-gray-800 p-4 rounded-xl max-h-[300px] lg:max-h-[570px] overflow-y-auto scrollbar scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
+            <div className="bg-gray-800 p-4 rounded-xl max-h-[300px] lg:max-h-[570px] overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
                 <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3 hide-scrollbar">
                     {selectedServer?.server_data?.map((ep, epIndex) => (
                         <div

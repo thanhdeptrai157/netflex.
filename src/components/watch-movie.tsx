@@ -27,7 +27,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
     return (
         <div className="w-full flex flex-col gap-6 lg:flex-row">
             <div className="w-full lg:w-[58%] flex flex-col gap-4">
-                <div className="aspect-video rounded-2xl overflow-hidden shadow-lg border border-gray-700">
+                <div className=" rounded-2xl overflow-hidden shadow-lg border border-gray-700">
                     <video
                         ref={videoRef}
                         controls

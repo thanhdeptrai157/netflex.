@@ -13,3 +13,8 @@ export const searchMovies = async (keyword: string, limit: number = 10) => {
         throw error;
     }
 }
+
+const SearchService = {
+    searchMovies,
+}
+export default SearchService;
