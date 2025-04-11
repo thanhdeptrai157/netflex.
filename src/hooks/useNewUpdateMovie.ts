@@ -30,6 +30,5 @@ export const useNewUpdateMovie = () => {
 
         fetchMovies();
     }, []);
-    console.log(movies);
     return { movies, loading, error };
 };

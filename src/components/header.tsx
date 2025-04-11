@@ -32,8 +32,8 @@ const Header = () => {
     <header className="bg-slate-950 fixed top-0 left-0 w-full h-[70px] flex items-center px-[4%] z-50 text-white md:h-[60px] ">
       <span className="mr-[5%]">
         <Link href="/" className="cursor-pointer">
-          <img src="/logo.png" alt="Logo" className="h-[40px] hidden lg:block" />
-          <img src="/logo-small.png" alt="Logo" className="h-[40px] lg:hidden" />
+          <img src="/logo.png" alt="Logo" className="h-[40px] hidden lg:block cursor-pointer" />
+          <img src="/logo-small.png" alt="Logo" className="h-[40px] lg:hidden cursor-pointer" />
         </Link>
       </span>
 
@@ -44,14 +44,14 @@ const Header = () => {
         `}
       >
         <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800">
-          <img src="/logo.png" alt="Logo" className="h-[30px]" />
+          <img src="/logo.png" alt="Logo" className="h-[30px] cursor-pointer" />
           <button onClick={() => setOpen(false)} className="cursor-pointer">
             <FontAwesomeIcon icon={faX} className="text-white" size="lg" />
           </button>
         </div>
 
         <nav className="flex flex-col gap-4 p-4 transition-colors duration-300">
-          <Link href="/" className="hover:text-red-600">Trang chủ</Link>
+          <Link href="/" className="hover:text-red-600 ">Trang chủ</Link>
           <Link href="/phim-le" className="hover:text-red-600">Phim Lẻ</Link>
           <Link href="/phim-bo" className="hover:text-red-600">Phim Bộ</Link>
           <Link href="/tv-shows" className="hover:text-red-600">TV Shows</Link>

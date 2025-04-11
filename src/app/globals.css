@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora&display=swap');
 @import "tailwindcss";
-
+@config "../../tailwind.config.ts";
 
 :root {
   --background: #ffffff;
@@ -47,13 +47,5 @@ body {
   .text-green-yellow {
     color: var(--green-yellow) !important;
   }
-  .hide-scrollbar {
-    scrollbar-width: none;
-    -ms-overflow-style: none; 
-  }
-  
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none; 
-  }
-  
+
 }

@@ -3,12 +3,16 @@ import { useSlider } from '@/hooks/useSlider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faLanguage, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 const Slider = () => {
     const { movies, loading, error } = useSlider();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(1);
-
+    const router = useRouter();
+    const handleNavigate = () => {
+        router.push(`/movie/${movies[currentIndex].slug}`);
+    }
     useEffect(() => {
         const interval = setInterval(() => {
             handleNext();
@@ -94,7 +98,9 @@ const Slider = () => {
                     </span>
                 </div>
 
-                <button className="mt-2 px-3 py-2 sm:px-4 sm:py-2 bg-red-500 text-black font-semibold rounded-md flex items-center gap-2 hover:bg-red-600 transition-all text-sm sm:text-base cursor-pointer">
+                <button className="mt-2 px-3 py-2 sm:px-4 sm:py-2 bg-red-500 text-black font-semibold rounded-md flex items-center gap-2 hover:bg-red-600 transition-all text-sm sm:text-base cursor-pointer"
+                onClick={handleNavigate}
+                >
                     <FontAwesomeIcon icon={faPlay} /> Xem
                 </button>
             </div>

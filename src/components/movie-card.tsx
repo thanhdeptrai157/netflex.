@@ -1,4 +1,5 @@
 "use client"
+import { useMovieStore } from '@/stores/movieStore';
 import { Movie } from '@/types/movie';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,9 +10,10 @@ import React from 'react'
 const MovieCard = ({ movie }: { movie: Movie }) => {
 
     const router = useRouter();
-
+    const { clearCurrentEpisode } = useMovieStore()
     const handleNavigate = () => {
         router.push(`/movie/${movie.slug}`);
+        clearCurrentEpisode()
     }
 
   return (

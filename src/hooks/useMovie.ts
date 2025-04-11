@@ -30,6 +30,5 @@ export const useMovie = (slug: string) => {
 
         fetchMovies();
     }, [slug]);
-    console.log(data);
     return { data, loading, error };
 };

@@ -1,13 +1,24 @@
 "use client"
 import { useMovie } from '@/hooks/useMovie'
-import React from 'react'
+import { Episode, EpisodeData, MovieDetail } from '@/types/movie'
+import React, { use, useEffect } from 'react'
+import EpisodeList from './episode-board'
+import { useMovieStore } from '@/stores/movieStore'
 
 
 
-const MovieDetail = ({slug}: {slug : string}) => {
+const MovieDetailComponent = ({ slug }: { slug: string }) => {
     const { loading, error, data } = useMovie(slug)
     const movie = data?.movie
-    const episodes = data?.episodes
+    const episodesServer = data?.episodes ? data?.episodes : [] as Episode[]
+
+    const {setMovieDetail} = useMovieStore();
+    useEffect(() => {
+        if (data) {
+            setMovieDetail(data.movie)
+        }
+    }
+    , [data, setMovieDetail])
 
     if (error) {
         return <div className="text-red-500 text-center mt-8">Đã có lỗi xảy ra khi tải dữ liệu phim.</div>
@@ -50,33 +61,17 @@ const MovieDetail = ({slug}: {slug : string}) => {
                             </div>
                         </div>)}
                     </div>
-
-                    <div className="w-full">
-                        <h4 className="text-xl font-semibold mb-3 text-green-yellow">Danh sách tập phim</h4>
-                        <div className="bg-gray-800 p-4 rounded-xl max-h-[300px] overflow-y-auto">
-                            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3  hide-scrollbar ">
-                                {episodes?.[0]?.server_data?.map((ep: any, index: number) => (
-                                    <div
-                                        key={index}
-                                        className="bg-slate-700 hover:bg-green-600 text-white text-center text-sm py-2 rounded-md cursor-pointer transition"
-                                        title={ep.name}
-                                        onClick={() => window.open(ep.link_embed, '_blank')}
-                                    >
-                                        {ep.name}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
                     <div className='mt-4'>
-                        <h3 className="text-lg font-semibold text-gray-400">Nội dung</h3>
+                        <h3 className="text-lg font-semibold text-green-yellow">Nội dung</h3>
                         <p className="text-sm text-gray-300">{movie?.content}</p>
                     </div>
+                    <EpisodeList episodes={episodesServer} name={movie?.slug ? movie?.slug : ""} />
+
+                  
                 </div>
             </div>
         </div>
     )
 }
 
-export default MovieDetail
+export default MovieDetailComponent
