@@ -3,10 +3,12 @@ import SearchService from '@/services/searchService'
 import { Movie } from '@/types/movie'
 import { useEffect, useState } from 'react'
 
-const useSearch = (keyword: string, debounce = 300) => {
+const useSearch = (keyword: string, page: number,  debounce = 300) => {
     const [allSearchResults, setSearchResults] = useState<Movie[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
+    const [totalPages, setTotalPages] = useState(0)
+    const [totalItems, setTotalItems] = useState(0)
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -23,11 +25,13 @@ const useSearch = (keyword: string, debounce = 300) => {
                 setLoading(true)
                 setError(null)
                 try {
-                    const response = await SearchService.searchMovies(trimmed, 100) as {
+                    const response = await SearchService.searchMovies(trimmed, page) as {
                         status: string
                         data: any
                     }
                     const data = response.data
+                    console.log(data)
+                    
                     if (response.status === "success") {
                         const movies = data.items.map((item: Movie) => ({
                             ...item,
@@ -37,6 +41,8 @@ const useSearch = (keyword: string, debounce = 300) => {
                                 ? item.poster_url
                                 : (APP_DOMAIN_CDN_IMAGE ?? "") + item.poster_url,
                         }))
+                        setTotalPages(data?.params?.pagination?.totalPages)
+                        setTotalItems(data?.params?.pagination?.totalItems)
                         setSearchResults(movies)
                     } else {
                         setSearchResults([])
@@ -56,13 +62,15 @@ const useSearch = (keyword: string, debounce = 300) => {
         return () => {
             clearTimeout(handler)
         }
-    }, [keyword, debounce])
+    }, [keyword, page, debounce])
     const searchResults = allSearchResults.slice(0, 10)
     return {
         searchResults,
         loading,
         error,
-        allSearchResults
+        allSearchResults,
+        totalItems,
+        totalPages
     }
 }
 

@@ -77,10 +77,10 @@ const Header = () => {
         <Link href="/tv-shows" className="hover:text-red-600 cursor-pointer">TV Shows</Link>
 
         {categories.length > 0 && (
-          <DropdownMenu label="Thể loại" items={categories} hrefBase="/the-loai" />
+          <DropdownMenu label="Thể loại" items={categories} hrefBase="/category" />
         )}
         {countries.length > 0 && (
-          <DropdownMenu label="Quốc gia" items={countries} hrefBase="/quoc-gia" />
+          <DropdownMenu label="Quốc gia" items={countries} hrefBase="/country" />
         )}
       </nav>
 

@@ -13,7 +13,7 @@ const SearchBar = () => {
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [query, setQuery] = useState('');
-    const {allSearchResults,  searchResults, loading, error } = useSearch(query, 500); // debounce 0.5s
+    const {allSearchResults,  searchResults, loading, error } = useSearch(query, 1,  500); // debounce 0.5s
     const [inputExpanded, setInputExpanded] = useState(false);
 
 

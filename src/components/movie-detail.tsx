@@ -73,7 +73,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                             className="rounded-xl"
                         />
                         <button
-                            className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full w-8 h-8 text-xl"
+                            className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full w-8 h-8 text-xl cursor-pointer"
                             onClick={() => setShowTrailer(false)}
                         >
                             <FontAwesomeIcon icon={faX} size="xs"/>

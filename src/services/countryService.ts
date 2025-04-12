@@ -1,3 +1,4 @@
+
 import axios from "../configs/axios";
 
 
@@ -14,9 +15,14 @@ export const getAllCountries = async () => {
 }
 
 // get movie by country
-export const getMoviesByCountry = async (slug: string, page: number = 1, limit: number = 64) => {
+export const getMoviesByCountry = async (slug: string, page: number = 1, limit: number = 18) => {
     try {
-        const response = await axios.get(`v1/api/quoc-gia/${slug}`);
+        const response = await axios.get(`v1/api/quoc-gia/${slug}`,{
+            params:{
+                page: page,
+                limit: limit
+            }
+        });
         return response.data;
     }
     catch (error) {

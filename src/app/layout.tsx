@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Netflex - Film",
   description: "Powered by NCT",
+  icons: {
+    icon: "/logo-small.png"
+  }
 };
 
 
