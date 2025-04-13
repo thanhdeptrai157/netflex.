@@ -6,7 +6,6 @@ import SeachBar from "./search-bar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faUser, faX } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { useMovieStore } from "@/stores/movieStore";
 import RecentMovie from "./recent-movie";
 
 const Header = () => {
@@ -53,9 +52,9 @@ const Header = () => {
 
         <nav className="flex flex-col gap-4 p-4 transition-colors duration-300">
           <Link href="/" className="hover:text-red-600 ">Trang chủ</Link>
-          <Link href="/phim-le" className="hover:text-red-600">Phim Lẻ</Link>
-          <Link href="/phim-bo" className="hover:text-red-600">Phim Bộ</Link>
-          <Link href="/tv-shows" className="hover:text-red-600">TV Shows</Link>
+          <Link href="/list/phim-le" className="hover:text-red-600">Phim Lẻ</Link>
+          <Link href="/list/phim-bo" className="hover:text-red-600">Phim Bộ</Link>
+          <Link href="/list/tv-shows" className="hover:text-red-600">TV Shows</Link>
           <h2 className="text-[16px] md:text-xl font-bold text-white">Phim Xem Gần Đây</h2>
           <div className="max-h-[370px] overflow-scroll overflow-y-auto scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
             <RecentMovie />
@@ -72,9 +71,9 @@ const Header = () => {
 
       <nav className="items-center space-x-5 hidden lg:flex">
         <Link href="/" className="hover:text-red-600 cursor-pointer">Trang chủ</Link>
-        <Link href="/phim-le" className="hover:text-red-600 cursor-pointer">Phim Lẻ</Link>
-        <Link href="/phim-bo" className="hover:text-red-600 cursor-pointer">Phim Bộ</Link>
-        <Link href="/tv-shows" className="hover:text-red-600 cursor-pointer">TV Shows</Link>
+        <Link href="/list/phim-le" className="hover:text-red-600 cursor-pointer">Phim Lẻ</Link>
+        <Link href="/list/phim-bo" className="hover:text-red-600 cursor-pointer">Phim Bộ</Link>
+        <Link href="/list/tv-shows" className="hover:text-red-600 cursor-pointer">TV Shows</Link>
 
         {categories.length > 0 && (
           <DropdownMenu label="Thể loại" items={categories} hrefBase="/category" />

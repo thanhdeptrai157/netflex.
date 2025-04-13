@@ -31,40 +31,51 @@ const LoadMovie = ({ slug }: { slug: string }) => {
     const isAndroid = /Android/i.test(navigator.userAgent)
 
     useEffect(() => {
+        setIsPlaying(false)
         const video = videoRef.current
         const link = currentEpisode?.link_m3u8
         if (!video || !link) return
-
+    
         let hls: Hls | null = null
-
+    
         const onLoadedMetadata = () => {
             setDuration(video.duration)
             setCurrentTime(video.currentTime)
             setIsReady(true)
         }
-
-        if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        
+        // ép android dùng native
+        if (/Android/i.test(navigator.userAgent)) {
+            video.src = link
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = link
         } else {
-            hls = new Hls()
+            hls = new Hls({
+                enableWorker: true,
+                lowLatencyMode: false,
+                maxBufferLength: 60,
+                maxMaxBufferLength: 120,
+                liveSyncDurationCount: 3,
+            })
             hls.loadSource(link)
             hls.attachMedia(video)
         }
-
+    
         video.addEventListener('loadedmetadata', onLoadedMetadata)
-
+    
         const interval = setInterval(() => {
             if (video.readyState >= 1 && !video.paused && !video.seeking) {
                 setCurrentTime(video.currentTime)
             }
         }, 200)
-
+    
         return () => {
             clearInterval(interval)
             if (hls) hls.destroy()
             video.removeEventListener('loadedmetadata', onLoadedMetadata)
         }
     }, [currentEpisode])
+    
 
     const togglePlay = () => {
         const video = videoRef.current
@@ -90,10 +101,19 @@ const LoadMovie = ({ slug }: { slug: string }) => {
     }
 
     useEffect(() => {
-        const video = videoRef.current
-        if (!video) return
-
         const handleKeyDown = (e: KeyboardEvent) => {
+            const video = videoRef.current
+            if (!video) return
+        
+            const active = document.activeElement
+            const isTyping = active && (
+                active.tagName === 'INPUT' ||
+                active.tagName === 'TEXTAREA' ||
+                (active as HTMLElement).isContentEditable
+            )
+        
+            if (isTyping) return 
+        
             switch (e.key) {
                 case ' ':
                     e.preventDefault()
@@ -114,22 +134,11 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                     break
             }
         }
+        
 
-        const handleFocus = () => {
-            video.addEventListener('keydown', handleKeyDown)
-        }
-
-        const handleBlur = () => {
-            video.removeEventListener('keydown', handleKeyDown)
-        }
-
-        video.addEventListener('focus', handleFocus)
-        video.addEventListener('blur', handleBlur)
-
+        window.addEventListener('keydown', handleKeyDown)
         return () => {
-            video.removeEventListener('focus', handleFocus)
-            video.removeEventListener('blur', handleBlur)
-            video.removeEventListener('keydown', handleKeyDown)
+            window.removeEventListener('keydown', handleKeyDown)
         }
     }, [togglePlay, toggleFullscreen])
 
@@ -198,16 +207,23 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                 >
                     <video
                         ref={videoRef}
+                        tabIndex={0}
                         className="w-full h-full object-contain"
                         onClick={() => {
-                            if (!showControls) {
-                                setShowControls(true)
-                                setControlsClickedOnce(true)
-                            } else if (controlsClickedOnce) {
-                                togglePlay()
-                                setControlsClickedOnce(false)
+                            videoRef.current?.focus()
+                        
+                            if (isAndroid) {
+                                if (!showControls) {
+                                    setShowControls(true)
+                                    setControlsClickedOnce(true)
+                                } else if (controlsClickedOnce) {
+                                    togglePlay()
+                                    setControlsClickedOnce(false)
+                                } else {
+                                    setControlsClickedOnce(true)
+                                }
                             } else {
-                                setControlsClickedOnce(true)
+                                togglePlay()
                             }
                         }}
                     />

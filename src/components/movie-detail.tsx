@@ -2,11 +2,11 @@
 import { useMovie } from "@/hooks/useMovie";
 import { Episode, EpisodeData, Movie, MovieDetail } from "@/types/movie";
 import React, { useEffect, useState } from "react";
-import EpisodeList from "./episode-board";
 import { useMovieStore } from "@/stores/movieStore";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 const MovieDetailComponent = ({ slug }: { slug: string }) => {
     const { loading, error, data } = useMovie(slug);
@@ -23,7 +23,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
 
     // lấy 3 tập mới nhất
     const newEps = episodesServer[0]?.server_data?.slice(episodesServer[0]?.server_data?.length - 3, episodesServer[0]?.server_data?.length)
-
+    console.log(newEps)
     useEffect(() => {
         if (data) {
             setMovieDetail(data.movie);
@@ -136,11 +136,16 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                                 <h2 className="text-3xl font-bold text-green-yellow">{movie?.name}</h2>
                                 <h3 className="text-lg font-semibold text-gray-400">{movie?.origin_name}</h3>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-sm text-gray-200">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-sm md:text-[16px] text-gray-200">
                                     <div className="space-y-1">
-                                        <p><span className="font-medium">Năm:</span> {movie?.year}</p>
-                                        <p><span className="font-medium">Thể loại:</span> {movie?.category?.map((item) => item.name).join(', ')}</p>
-                                        <p><span className="font-medium">Số tập:</span> {movie?.episode_total}</p>
+                                        <p><span className="font-medium">Năm:</span> {movie?.year == 0? "Đang cập nhật" : movie?.year}</p>
+                                        <p><span className="font-medium">Thể loại: </span> 
+                                        {movie?.category?.map((item, idx) => (
+                                            <><Link className="hover:text-lime-500" key={idx} href={`/category/${item.slug}`}>{item.name}</Link>
+                                             {idx < movie.category.length - 1 && ', '}</>
+                                            ))}
+                                        </p>
+                                        <p><span className="font-medium">Số tập:</span> {movie?.episode_total == "0"? "Đang cập nhật" : movie?.episode_total }</p>
                                         <p><span className="font-medium">Đạo diễn:</span> {movie?.director}</p>
                                         <p><span className="font-medium">Diễn viên:</span> {movie?.actor?.join(', ')}</p>
                                     </div>
@@ -155,12 +160,12 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                             </div>
                             <div className="mt-1">
                                 <h3 className="text-lg font-semibold text-green-yellow">Nội dung</h3>
-                                <p className="text-sm text-gray-300 ">{movie?.content}</p>
+                                <p className="text-sm md:text-[16px] text-gray-300 ">{movie?.content}</p>
                             </div>
                             <div className="mt-1">
                                 <h3 className="text-green-yellow font-bold">Tập mới nhất</h3>
                                 <div className="mt-3 rounded-xl w-[100%] md:w-[30%]">
-                                    <div className="grid grid-cols-3 w-[100%] gap-3">
+                                    {newEps.length > 0  && newEps[0].name != '' ? (<div className="grid grid-cols-3 w-[100%] gap-3">
                                         {newEps.map((ep, epIndex) => (
                                             <div
                                                 key={epIndex}
@@ -172,7 +177,9 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                                                 {ep.name}
                                             </div>
                                         ))}
-                                    </div>
+                                    </div>) : (
+                                        <div className="text-white">Đang cập nhật</div>
+                                    )}
                                 </div>
                             </div>
                         </>
