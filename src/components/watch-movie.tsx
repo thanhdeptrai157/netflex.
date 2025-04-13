@@ -8,13 +8,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faForward, faForwardStep, faPause, faPlay, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeUp } from '@fortawesome/free-solid-svg-icons/faVolumeUp'
 
-
 const LoadMovie = ({ slug }: { slug: string }) => {
     const { episodes, movieDetail, currentEpisode } = useMovieStore()
     const videoRef = useRef<HTMLVideoElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
 
     const [isPlaying, setIsPlaying] = useState(false)
+    const [isReady, setIsReady] = useState(false)
     const [currentTime, setCurrentTime] = useState(0)
     const [duration, setDuration] = useState(0)
     const [volume, setVolume] = useState(1)
@@ -37,30 +37,38 @@ const LoadMovie = ({ slug }: { slug: string }) => {
 
         let hls: Hls | null = null
 
+        const onLoadedMetadata = () => {
+            setDuration(video.duration)
+            setCurrentTime(video.currentTime)
+            setIsReady(true)
+        }
+
         if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = link
-            video.play()
         } else {
             hls = new Hls()
             hls.loadSource(link)
             hls.attachMedia(video)
         }
 
+        video.addEventListener('loadedmetadata', onLoadedMetadata)
+
         const interval = setInterval(() => {
-            if (!video.paused && !video.seeking) {
+            if (video.readyState >= 1 && !video.paused && !video.seeking) {
                 setCurrentTime(video.currentTime)
-                setDuration(video.duration)
             }
         }, 200)
 
         return () => {
             clearInterval(interval)
             if (hls) hls.destroy()
+            video.removeEventListener('loadedmetadata', onLoadedMetadata)
         }
     }, [currentEpisode])
+
     const togglePlay = () => {
         const video = videoRef.current
-        if (!video) return
+        if (!video || !isReady) return
 
         if (video.paused) {
             video.play()
@@ -70,6 +78,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
             setIsPlaying(false)
         }
     }
+
     const toggleFullscreen = () => {
         const container = containerRef.current
         if (!container) return
@@ -79,10 +88,11 @@ const LoadMovie = ({ slug }: { slug: string }) => {
             container.requestFullscreen()
         }
     }
+
     useEffect(() => {
         const video = videoRef.current
         if (!video) return
-    
+
         const handleKeyDown = (e: KeyboardEvent) => {
             switch (e.key) {
                 case ' ':
@@ -104,32 +114,28 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                     break
             }
         }
-    
+
         const handleFocus = () => {
             video.addEventListener('keydown', handleKeyDown)
         }
-    
+
         const handleBlur = () => {
             video.removeEventListener('keydown', handleKeyDown)
         }
-    
+
         video.addEventListener('focus', handleFocus)
         video.addEventListener('blur', handleBlur)
-    
-        // Cleanup
+
         return () => {
             video.removeEventListener('focus', handleFocus)
             video.removeEventListener('blur', handleBlur)
             video.removeEventListener('keydown', handleKeyDown)
         }
     }, [togglePlay, toggleFullscreen])
-    
-
-   
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         const video = videoRef.current
-        if (!video) return
+        if (!video || !isReady) return
         const value = Number(e.target.value)
         video.currentTime = value
         setCurrentTime(value)
@@ -142,8 +148,6 @@ const LoadMovie = ({ slug }: { slug: string }) => {
         video.volume = vol
         setVolume(vol)
     }
-
-
 
     const handleMouseMove = () => {
         setShowControls(true)
@@ -223,6 +227,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                                 onChange={handleSeek}
                                 onMouseMove={handleSeekHover}
                                 onMouseLeave={handleSeekLeave}
+                                disabled={!isReady}
                                 className="w-full accent-lime-400 cursor-pointer"
                             />
                             {showTooltip && (
@@ -238,7 +243,10 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                         <div className="flex justify-between items-center mt-2 gap-2 text-sm text-white">
                             <button
                                 onClick={togglePlay}
-                                className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition cursor-pointer"
+                                disabled={!isReady}
+                                className={`px-3 py-1 rounded-md ${
+                                    !isReady ? 'opacity-50 cursor-not-allowed' : 'bg-white/10 hover:bg-white/20'
+                                } transition`}
                             >
                                 {isPlaying ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
                             </button>
@@ -246,7 +254,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             <button
                                 onClick={() => {
                                     const video = videoRef.current
-                                    if (!video) return
+                                    if (!video || !isReady) return
                                     video.currentTime += 90
                                 }}
                                 className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 transition text-xs flex items-center cursor-pointer"
@@ -257,7 +265,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             <button
                                 onClick={() => {
                                     const video = videoRef.current
-                                    if (!video) return
+                                    if (!video || !isReady) return
                                     video.currentTime += 30
                                 }}
                                 className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 transition text-xs flex items-center cursor-pointer"
@@ -266,7 +274,6 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             </button>
 
                             <div className="flex items-center gap-2">
-                                
                                 {isAndroid ? (
                                     <button
                                         onClick={() => {
@@ -280,17 +287,17 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                                         {volume === 0 ? <FontAwesomeIcon icon={faVolumeMute} /> : <FontAwesomeIcon icon={faVolumeUp} />}
                                     </button>
                                 ) : (
-                                    <div className='flex items-center gap-2'>
+                                    <div className="flex items-center gap-2">
                                         {volume === 0 ? <FontAwesomeIcon icon={faVolumeMute} /> : <FontAwesomeIcon icon={faVolumeUp} />}
                                         <input
-                                        type="range"
-                                        min="0"
-                                        max="1"
-                                        step="0.01"
-                                        value={volume}
-                                        onChange={handleVolume}
-                                        className="accent-lime-300 w-[60%] sm:w-full cursor-pointer"
-                                    />
+                                            type="range"
+                                            min="0"
+                                            max="1"
+                                            step="0.01"
+                                            value={volume}
+                                            onChange={handleVolume}
+                                            className="accent-lime-300 w-[60%] sm:w-full cursor-pointer"
+                                        />
                                     </div>
                                 )}
                             </div>
@@ -299,12 +306,14 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                                 {formatTime(currentTime)} / {formatTime(duration)}
                             </span>
 
-                            {!isAndroid && <button
-                                onClick={handlePlaybackRate}
-                                className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition"
-                            >
-                                {playbackRate}x
-                            </button>}
+                            {!isAndroid && (
+                                <button
+                                    onClick={handlePlaybackRate}
+                                    className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition"
+                                >
+                                    {playbackRate}x
+                                </button>
+                            )}
 
                             <button
                                 onClick={toggleFullscreen}
