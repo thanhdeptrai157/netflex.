@@ -36,6 +36,22 @@ export const metadata: Metadata = {
     },
   },
   keywords: ["Phim", "Xem phim", "Netflex", "Phim miễn phí"],
+  openGraph: {
+    title: "Netflex - Film",
+    description: "Powered by NCT",
+    url: "https://netflex-film.vercel.app",
+    siteName: "Netflex",
+    images: [
+      {
+        url: "https://netflex-film.vercel.app/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Netflex Film - Xem phim",
+      },
+    ],
+    locale: "vi_VN",
+    type: "website",
+  },
 };
 
 

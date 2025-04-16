@@ -31,10 +31,10 @@ const RecentMovie = () => {
                             />
                         </div>
                         <div className="flex flex-col justify-between overflow-hidden max-w-[120px] md:max-w-[300px]">
-                            <div className="whitespace-nowrap inline-block animate-scroll text-green-yellow text-sm md:text-xl font-semibold">
+                            <div className="whitespace-nowrap inline-block text-green-yellow text-sm md:text-xl font-semibold">
                                 {movie.name}
                             </div>
-                            <div className="whitespace-nowrap inline-block animate-scroll text-white/80 text-xs md:text-[17px]">
+                            <div className="whitespace-nowrap inline-block  text-white/80 text-xs md:text-[17px]">
                                 {movie.origin_name}
                             </div>
                             <p className="text-white/50 text-sm">{movie.year}</p>
