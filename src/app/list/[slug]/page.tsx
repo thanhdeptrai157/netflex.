@@ -10,7 +10,7 @@ import { useHeaderStore } from '@/stores/headerStore'
 const sortFields = ["modified.time", "year"] as const
 const sortTypes = ["asc", "desc"] as const
 const sortLangs = ["vietsub", "thuyet-minh"] as const
-const limits = [12, 24, 48, 96]
+const limits = [12, 24, 48, 64]
 const years = Array.from({ length: 2025 - 1970 + 1 }, (_, i) => (2025 - i).toString())
 
 
@@ -79,52 +79,52 @@ const ListPage = () => {
   return (
     <div className="min-h-screen bg-slate-900 px-3 sm:px-4 lg:px-6 py-20 text-white">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-        <select value={typeList} onChange={(e) => setTypeList(e.target.value as TypeList)} className="bg-slate-800 p-2 rounded">
+        <select value={typeList} onChange={(e) => setTypeList(e.target.value as TypeList)} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           {Object.entries(typeListLabels).map(([key, label]) => (
             <option key={key} value={key}>{label}</option>
           ))}
         </select>
 
-        <select value={sortField} onChange={(e) => setSortField(e.target.value as SortField)} className="bg-slate-800 p-2 rounded">
+        <select value={sortField} onChange={(e) => setSortField(e.target.value as SortField)} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           {sortFields.map(f => (
             <option key={f} value={f}>{sortFieldLabels[f]}</option>
           ))}
         </select>
 
-        <select value={sortType} onChange={(e) => setSortType(e.target.value as SortType)} className="bg-slate-800 p-2 rounded">
+        <select value={sortType} onChange={(e) => setSortType(e.target.value as SortType)} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           {sortTypes.map(t => (
             <option key={t} value={t}>{sortTypeLabels[t]}</option>
           ))}
         </select>
 
-        <select value={sortLang} onChange={(e) => setSortLang(e.target.value as LangList)} className="bg-slate-800 p-2 rounded">
+        <select value={sortLang} onChange={(e) => setSortLang(e.target.value as LangList)} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           {sortLangs.map(lang => (
             <option key={lang} value={lang}>{sortLangLabels[lang]}</option>
           ))}
         </select>
 
-        <select value={category} onChange={(e) => setCategory(e.target.value)} className="bg-slate-800 p-2 rounded">
+        <select value={category} onChange={(e) => setCategory(e.target.value)} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           <option value="">Thể loại</option>
           {categories.map(c => (
             <option key={c._id} value={c.slug}>{c.name}</option>
           ))}
         </select>
 
-        <select value={country} onChange={(e) => setCountry(e.target.value)} className="bg-slate-800 p-2 rounded">
+        <select value={country} onChange={(e) => setCountry(e.target.value)} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           <option value="">Quốc gia</option>
           {countries.map(c => (
             <option key={c._id} value={c.slug}>{c.name}</option>
           ))}
         </select>
 
-        <select value={year} onChange={(e) => setYear(Number(e.target.value))} className="bg-slate-800 p-2 rounded">
+        <select value={year} onChange={(e) => setYear(Number(e.target.value))} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           <option value="">Năm</option>
           {years.map(y => (
             <option key={y} value={y}>{y}</option>
           ))}
         </select>
 
-        <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="bg-slate-800 p-2 rounded">
+        <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           {limits.map(l => (
             <option key={l} value={l}>Hiển thị {l}</option>
           ))}

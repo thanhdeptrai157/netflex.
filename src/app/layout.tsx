@@ -21,7 +21,21 @@ export const metadata: Metadata = {
   description: "Powered by NCT",
   icons: {
     icon: "/logo-small.png"
-  }
+  },
+  verification: {
+    google: "G2TD8XixScTKgr8VOdwrmrTUiIYj43xiOsmVa0gpEhE",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+    },
+  },
+  keywords: ["Phim", "Xem phim", "Netflex", "Phim miễn phí"],
 };
 
 

@@ -15,7 +15,6 @@ const NewUpdateMovie = () => {
         <div className="mt-10 w-full">
             <div className="flex items-center">
                 <h2 className="text-white text-[18px] font-bold mb-0">Phim mới cập nhật</h2>
-                <button className="text-white ml-auto items-center bg-gradient-red-orange px-3 rounded-xl">Xem thêm</button>
             </div>
 
             <div className="mt-5">
