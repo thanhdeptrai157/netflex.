@@ -81,7 +81,7 @@ const ListPage = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         <select value={typeList} onChange={(e) => setTypeList(e.target.value as TypeList)} className="bg-slate-800 p-2 rounded overflow-y-auto  scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
           {Object.entries(typeListLabels).map(([key, label]) => (
-            <option key={key} value={key}>{label}</option>
+            <option key={key} value={key} className='hover:bg-lime-400 bg-slate-700'>{label}</option>
           ))}
         </select>
 

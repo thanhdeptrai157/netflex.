@@ -2,8 +2,6 @@
 
 import { useSearchParams } from 'next/navigation'
 import React, { Suspense, useEffect, useMemo, useState } from 'react'
-
-import MovieCard from '@/components/movie-card'
 import MovieDisplay from '@/components/movies-display'
 import Pagination from '@/components/pagination'
 import useSearch from '@/hooks/useSearch'
@@ -18,8 +16,6 @@ const Search = () => {
     useEffect(() => {
         setCurrentPage(1) // Reset về page 1 khi query thay đổi
     }, [query])
-
-
 
     return (
         <div className="min-h-screen bg-slate-900 px-3 sm:px-4 lg:px-6 py-20">

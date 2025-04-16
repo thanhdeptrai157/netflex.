@@ -26,7 +26,6 @@ export const useCountries = (name: string, page: number) => {
                     data: any
                 }
                 const data = response.data
-                console.log(data)
                 if (response.status === "success") {
                     const movies = data.items.map((item: Movie) => ({
                         ...item,

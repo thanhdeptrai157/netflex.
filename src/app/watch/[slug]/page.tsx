@@ -1,7 +1,35 @@
 import NewUpdateMovie from '@/components/new-update-movie';
 import LoadMovie from '@/components/watch-movie';
+import { fetchMovieDetail } from '@/lib/fetchDetailCategory';
+import { Metadata } from 'next';
 import React from 'react'
-
+export const generateMetadata = async ({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> => {
+  try {
+    const movie = await fetchMovieDetail((await params).slug);
+    return {
+      title: `${movie?.name} - Xem phim miễn phí | Netflex`,
+      description: movie?.content || "Xem phim miễn phí trên Netflex.",
+      keywords: movie?.category?.map((cat: any) => cat.name).join(", ") || "",
+      openGraph: {
+        title: movie?.name,
+        description: movie?.content,
+        images: [
+          {
+            url: movie?.poster_url ? movie?.poster_url : "",
+            width: 800,
+            height: 600,
+            alt: movie?.name,
+          },
+        ],
+      },
+    };
+  } catch (err) {
+    return {
+      title: "Phim không tồn tại | Netflex",
+      description: "Không tìm thấy thông tin phim.",
+    };
+  }
+};
 const WatchMovie = async ({ params }: { params: Promise<{ slug: string}> }) => {
     const { slug } = await params;
     return (

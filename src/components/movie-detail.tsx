@@ -23,7 +23,6 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
 
     // lấy 3 tập mới nhất
     const newEps = episodesServer[0]?.server_data?.slice(episodesServer[0]?.server_data?.length - 3, episodesServer[0]?.server_data?.length)
-    console.log(newEps)
     useEffect(() => {
         if (data) {
             setMovieDetail(data.movie);

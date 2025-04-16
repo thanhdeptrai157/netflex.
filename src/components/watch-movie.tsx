@@ -271,7 +271,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                                 onClick={() => {
                                     const video = videoRef.current
                                     if (!video || !isReady) return
-                                    video.currentTime += 90
+                                    video.currentTime += 85
                                 }}
                                 className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 transition text-xs flex items-center cursor-pointer"
                             >
@@ -282,7 +282,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                                 onClick={() => {
                                     const video = videoRef.current
                                     if (!video || !isReady) return
-                                    video.currentTime += 30
+                                    video.currentTime += 25
                                 }}
                                 className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 transition text-xs flex items-center cursor-pointer"
                             >

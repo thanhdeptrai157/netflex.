@@ -1,0 +1,10 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+
+# Host
+Host: https://netflex-film.vercel.app
+
+# Sitemaps
+Sitemap: https://netflex-film.vercel.app/sitemap.xml

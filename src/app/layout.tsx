@@ -47,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${lora.variable} ${geistMono.variable} antialiased  text-white`}
+        className={`${lora.variable} ${geistMono.variable} antialiased  text-white ` }
         style={{ fontFamily: "var(--font-lora)" }} 
       >
         <Header />
