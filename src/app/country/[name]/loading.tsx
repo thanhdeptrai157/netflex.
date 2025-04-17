@@ -1,8 +1,11 @@
 const Loading = () => (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900">
-      <div className="w-12 h-12 border-4 border-lime-500 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-  
-  export default Loading;
-  
+  <div className="min-h-screen flex items-center justify-center bg-slate-900">
+    <img
+      src="/cat.gif"
+      alt="Loading cat"
+      className="w-50 h-50 object-contain"
+    />
+  </div>
+)
+
+export default Loading

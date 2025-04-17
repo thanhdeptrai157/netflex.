@@ -32,18 +32,25 @@ const LoadMovie = ({ slug }: { slug: string }) => {
 
     useEffect(() => {
         setIsPlaying(false)
+        setIsReady(false)
+        setCurrentTime(0)
         const video = videoRef.current
         const link = currentEpisode?.link_m3u8
         if (!video || !link) return
-    
+
         let hls: Hls | null = null
-    
+
         const onLoadedMetadata = () => {
             setDuration(video.duration)
             setCurrentTime(video.currentTime)
             setIsReady(true)
+            video.play().then(() => {
+                setIsPlaying(true)
+            }).catch((err) => {
+                console.warn("Autoplay failed:", err)
+            })
         }
-        
+
         // ép android dùng native
         if (/Android/i.test(navigator.userAgent)) {
             video.src = link
@@ -60,22 +67,22 @@ const LoadMovie = ({ slug }: { slug: string }) => {
             hls.loadSource(link)
             hls.attachMedia(video)
         }
-    
+
         video.addEventListener('loadedmetadata', onLoadedMetadata)
-    
+
         const interval = setInterval(() => {
             if (video.readyState >= 1 && !video.paused && !video.seeking) {
                 setCurrentTime(video.currentTime)
             }
         }, 200)
-    
+
         return () => {
             clearInterval(interval)
             if (hls) hls.destroy()
             video.removeEventListener('loadedmetadata', onLoadedMetadata)
         }
     }, [currentEpisode])
-    
+
 
     const togglePlay = () => {
         const video = videoRef.current
@@ -104,16 +111,16 @@ const LoadMovie = ({ slug }: { slug: string }) => {
         const handleKeyDown = (e: KeyboardEvent) => {
             const video = videoRef.current
             if (!video) return
-        
+
             const active = document.activeElement
             const isTyping = active && (
                 active.tagName === 'INPUT' ||
                 active.tagName === 'TEXTAREA' ||
                 (active as HTMLElement).isContentEditable
             )
-        
-            if (isTyping) return 
-        
+
+            if (isTyping) return
+
             switch (e.key) {
                 case ' ':
                     e.preventDefault()
@@ -134,7 +141,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                     break
             }
         }
-        
+
 
         window.addEventListener('keydown', handleKeyDown)
         return () => {
@@ -205,13 +212,23 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                     onMouseMove={handleMouseMove}
                     className="relative shadow-lg border border-gray-700 bg-black aspect-video group"
                 >
+                    {!isReady && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-10 ">
+                            <div className='animate-bounce text-center'><img
+                                src="/cat.gif"
+                                alt="Loading..."
+                                className="w-25 h-25 object-contain md:w-40 md:h-40 lg:w-50 lg:h-50"
+                            />
+                            <span className='text-white text-center text-[12px] md:text-[16px]'>Đang tải phim...</span></div>
+                        </div>
+                    )}
                     <video
                         ref={videoRef}
                         tabIndex={0}
                         className="w-full h-full object-contain"
                         onClick={() => {
                             videoRef.current?.focus()
-                        
+
                             if (isAndroid) {
                                 if (!showControls) {
                                     setShowControls(true)
@@ -228,9 +245,8 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                         }}
                     />
                     <div
-                        className={`absolute bottom-0 left-0 right-0 transition-opacity duration-500 p-4 bg-gradient-to-t from-black/80 via-black/30 to-transparent ${
-                            showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                        }`}
+                        className={`absolute bottom-0 left-0 right-0 transition-opacity duration-500 p-4 bg-gradient-to-t from-black/80 via-black/30 to-transparent ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                            }`}
                     >
                         <div className="relative">
                             <input
@@ -260,9 +276,8 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             <button
                                 onClick={togglePlay}
                                 disabled={!isReady}
-                                className={`px-3 py-1 rounded-md ${
-                                    !isReady ? 'opacity-50 cursor-not-allowed' : 'bg-white/10 hover:bg-white/20'
-                                } transition`}
+                                className={`px-3 py-1 rounded-md ${!isReady ? 'opacity-50 cursor-not-allowed' : 'bg-white/10 hover:bg-white/20'
+                                    } transition`}
                             >
                                 {isPlaying ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
                             </button>
