@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Lora, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
+import { ToastContainer } from "react-toastify";
 
 
 const lora = Lora({
@@ -66,6 +67,7 @@ export default function RootLayout({
         className={`${lora.variable} ${geistMono.variable} antialiased  text-white ` }
         style={{ fontFamily: "var(--font-lora)" }} 
       >
+        <ToastContainer position="top-center" theme="dark" />
         <Header />
         <div className="px-3 md:px-5 lg:px-10 bg-slate-800">
           {children}

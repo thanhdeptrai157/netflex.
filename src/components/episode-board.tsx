@@ -172,23 +172,6 @@ const EpisodeList = ({ episodes, name }: { episodes: Episode[]; name: string }) 
           </div>
         )}
       </motion.div>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #1f2937;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #22c55e;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #16a34a;
-        }
-      `}</style>
     </div>
   )
 }

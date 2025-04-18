@@ -7,6 +7,7 @@ import { useMovieStore } from "@/stores/movieStore"
 import { useRouter } from "next/navigation"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
+  faBookmark,
   faCalendarDays,
   faCirclePlay,
   faFilm,
@@ -17,6 +18,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
+import { addLikeMovie, getLikedMovies, removeLikeMovie } from "@/services/userService"
+import { useUserStore } from "@/stores/userStore"
+import { toast } from "react-toastify"
 
 const MovieDetailComponent = ({ slug }: { slug: string }) => {
   const { loading, error, data } = useMovie(slug)
@@ -27,11 +31,13 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
   const [showTrailer, setShowTrailer] = useState(false)
   const [isImageLoaded, setIsImageLoaded] = useState(false)
 
+  const {user, likedMovies, removeLikedMovie, setLikedMovies } = useUserStore()
   const getYoutubeEmbedUrl = (url: string) => {
     const match = url.match(/(?:\?v=|\/embed\/|\.be\/)([a-zA-Z0-9_-]{11})/)
     return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : ""
   }
 
+  
   // lấy 3 tập mới nhất
   const newEps = episodesServer[0]?.server_data?.slice(
     Math.max(0, (episodesServer[0]?.server_data?.length || 0) - 3),
@@ -64,6 +70,26 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
     addWatchedMovie(movieDetail as Movie)
   }
 
+  const handleLikeMovie = () => {
+    if (user) {
+      const uid = user.uid
+      addLikeMovie(uid, movieDetail?.slug as string)
+      toast.success("Thêm vào yêu thích thành công")
+      setLikedMovies()
+    } else {
+      // thong bao nguoi dung dang nhap
+      toast.warning("Vui lòng đăng nhập để thêm vào yêu thích")
+    }
+  }
+  const handleUnlikeMovie = () => {
+    if (user) {
+      const uid = user.uid
+      removeLikeMovie(uid, movieDetail?.slug as string)
+      toast.success("Xóa khỏi yêu thích thành công")
+      setLikedMovies()
+    }
+  }
+  console.log(movieDetail?.slug)
   if (error) {
     return (
       <div className="text-red-500 text-center mt-8 p-6 bg-slate-800/50 rounded-xl backdrop-blur-sm">
@@ -125,7 +151,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
         )}
       </AnimatePresence>
 
-      <div className="max-w-7xl flex flex-col lg:flex-row gap-10 w-full">
+      <div className="max-w-8xl flex flex-col lg:flex-row gap-10 w-full">
 
         <div className="w-full lg:w-[40%] xl:w-[30%] relative flex justify-center">
           <motion.div
@@ -162,7 +188,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-3 md:py-3 md:px-5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-purple-500/30 transition-all duration-300 text-sm md:text-base"
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-3 md:py-3 md:px-5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-purple-500/30 transition-all duration-300 text-sm md:text-base cursor-pointer"
                       onClick={() => setShowTrailer(true)}
                     >
                       <FontAwesomeIcon icon={faCirclePlay} className="text-lg" />
@@ -171,7 +197,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-2 px-3 md:py-3 md:px-5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-red-500/30 transition-all duration-300 text-sm md:text-base"
+                      className="bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-2 px-3 md:py-3 md:px-5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-red-500/30 transition-all duration-300 text-sm md:text-base cursor-pointer"
                       onClick={() => handleWatchNow()}
                     >
                       <FontAwesomeIcon icon={faFilm} className="text-lg" />
@@ -220,7 +246,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
             </div>
           ) : (
             <>
-              <div className="space-y-2">
+              <div className="space-y-2 ">
                 <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-300">
                   {movie?.name}
                 </h1>
@@ -231,9 +257,10 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                     {movie.status}
                   </div>
                 )}
+                
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-4 bg-slate-800/40 backdrop-blur-sm p-6 rounded-xl border border-slate-700/50">
+              <div className="grid grid-cols-1 sm:grid-cols-[60%_40%] gap-7 mt-1 bg-slate-800/40 backdrop-blur-sm p-6 rounded-xl border border-slate-700/50">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <FontAwesomeIcon icon={faCalendarDays} className="text-green-400 w-5" />
@@ -241,7 +268,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                     <span className="text-white">{movie?.year == 0 ? "Đang cập nhật" : movie?.year}</span>
                   </div>
 
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-2 ">
                     <FontAwesomeIcon icon={faStar} className="text-yellow-400 w-5 mt-1" />
                     <span className="font-medium text-gray-300">Thể loại:</span>
                     <div className="flex flex-wrap gap-1">
@@ -316,10 +343,26 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                       {movie?.episode_current || "Đang cập nhật"}
                     </span>
                   </p>
+                  <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-gradient-to-r from-lime-400 to-green-600 text-white font-bold py-1 px-3 md:py-2 md:px-5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-yellow-500/30 transition-all duration-300 text-sm md:text-base cursor-pointer"
+                      onClick={() => {
+                        if (likedMovies.includes(movieDetail?.slug as string)) {
+                          handleUnlikeMovie()
+                          
+                        } else {
+                          handleLikeMovie()
+                        }
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faBookmark} className="text-lg" />
+                      <span>{likedMovies.includes(movieDetail?.slug as string) ? "Xoá khỏi yêu thích" : "Thêm vào yêu thích"}</span>
+                    </motion.button>
                 </div>
               </div>
 
-              <div className="mt-6">
+              <div className="mt-1">
                 <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-300 mb-3">
                   Nội dung
                 </h3>

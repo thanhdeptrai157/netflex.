@@ -12,8 +12,6 @@ const RecentMovie = () => {
 
     return (
         <div className="space-y-4">
-
-
             {watchedMovie.length === 0 ? (
                 <div className="text-white text-[15px] text-green-yellow text-center">Chưa có phim nào</div>
             ) : (

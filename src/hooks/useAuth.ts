@@ -1,5 +1,5 @@
 import { auth } from "@/lib/firebase"
-import { loginWithGoogle, signOutFirebase } from "@/services/firebaseAuth"
+import { loginWithGoogle, signOutFirebase } from "@/services/firebaseAuthService"
 import { useUserStore } from "@/stores/userStore"
 import { sign } from "crypto"
 import { use, useEffect, useState } from "react"

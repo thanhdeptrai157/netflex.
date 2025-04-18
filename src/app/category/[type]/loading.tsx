@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Loading = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900">
     <img

@@ -17,6 +17,8 @@ export const loginWithGoogle = async () => {
       name: user.displayName,
       photoURL: user.photoURL,
       createdAt: new Date().toISOString(),
+      bio: "",
+      favoriteGenres: [],
     });
   }
 

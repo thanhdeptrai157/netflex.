@@ -6,7 +6,7 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons"
 import { faFilm, faLock, faRightToBracket, faSpinner } from "@fortawesome/free-solid-svg-icons"
 import { useRouter } from "next/navigation"
 import { useUserStore } from "@/stores/userStore"
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useAuth } from "@/hooks/useAuth"
 import { motion, AnimatePresence } from "framer-motion"
@@ -22,7 +22,7 @@ const slogans = [
 ]
 
 const LoginPage = () => {
-  const { setUser } = useUserStore()
+  const { setUser, setLikedMovies } = useUserStore()
   const router = useRouter()
   const { login, user, loading, error } = useAuth()
 
@@ -59,6 +59,7 @@ const LoginPage = () => {
         displayName: user.displayName,
         photoURL: user.photoURL,
       })
+      setLikedMovies()
       toast.success("Đăng nhập thành công 🎉", { autoClose: 1000 })
       setTimeout(() => router.push("/"), 1000)
     }
@@ -88,14 +89,14 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
 
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 top-10 overflow-hidden w-full h-full">
         {floatingElements.map((el, index) => (
           <motion.div
             key={index}
-            className="absolute text-3xl opacity-10"
+            className="absolute text-4xl opacity-50"
             initial={{
               x: `${Math.random() * 100}%`,
-              y: "110%",
+              y: "150%",
             }}
             animate={{
               y: "-10%",
@@ -115,8 +116,6 @@ const LoginPage = () => {
       </div>
 
       <div className="absolute inset-0 bg-radial-gradient"></div>
-
-      <ToastContainer position="top-center" theme="dark" />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -150,8 +149,6 @@ const LoginPage = () => {
               </motion.div>
             </AnimatePresence>
           </div>
-
-
           <motion.h2
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -169,7 +166,7 @@ const LoginPage = () => {
             whileTap={{ scale: 0.95 }}
             onClick={handleGoogleLogin}
             disabled={loading || !!user}
-            className="w-full max-w-xs flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed relative overflow-hidden group"
+            className="w-full max-w-xs flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed relative overflow-hidden group cursor-pointer"
           >
             <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
 
@@ -258,19 +255,7 @@ const LoginPage = () => {
       </motion.div>
 
       <style jsx global>{`
-        .bg-radial-gradient {
-          background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
-        }
         
-        @keyframes shine {
-          100% {
-            left: 125%;
-          }
-        }
-        
-        .animate-shine {
-          animation: shine 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
       `}</style>
     </div>
   )
