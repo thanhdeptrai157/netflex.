@@ -5,8 +5,9 @@ import EpisodeList from './episode-board'
 import { useMovieStore } from '@/stores/movieStore'
 import Hls from 'hls.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faForward, faForwardStep, faPause, faPlay, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
+import { faBackward, faForward, faForwardStep, faPause, faPlay, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeUp } from '@fortawesome/free-solid-svg-icons/faVolumeUp'
+import { RotateCcw } from 'lucide-react'
 
 const LoadMovie = ({ slug }: { slug: string }) => {
     const { episodes, movieDetail, currentEpisode } = useMovieStore()
@@ -24,6 +25,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
     const [hoverX, setHoverX] = useState(0)
     const [showTooltip, setShowTooltip] = useState(false)
     const [controlsClickedOnce, setControlsClickedOnce] = useState(false)
+    const [isHideCursor, setIsHideCursor] = useState(false)
 
     const controlTimeout = useRef<NodeJS.Timeout | null>(null)
     const seekRef = useRef<HTMLInputElement>(null)
@@ -111,16 +113,22 @@ const LoadMovie = ({ slug }: { slug: string }) => {
         const handleKeyDown = (e: KeyboardEvent) => {
             const video = videoRef.current
             if (!video) return
-
+    
             const active = document.activeElement
-            const isTyping = active && (
-                active.tagName === 'INPUT' ||
-                active.tagName === 'TEXTAREA' ||
-                (active as HTMLElement).isContentEditable
+    
+            const isInput = active?.tagName === 'INPUT'
+            const isRange = isInput && (active as HTMLInputElement).type === 'range'
+            const isTyping = (
+                (!isRange && isInput) || // đang gõ ở input trừ range
+                active?.tagName === 'TEXTAREA' ||
+                (active as HTMLElement)?.isContentEditable
             )
-
+    
             if (isTyping) return
-
+    
+            // nếu đang focus ở range thì không xử lý arrow keys
+            if (isRange && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return
+    
             switch (e.key) {
                 case ' ':
                     e.preventDefault()
@@ -141,13 +149,13 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                     break
             }
         }
-
-
+    
         window.addEventListener('keydown', handleKeyDown)
         return () => {
             window.removeEventListener('keydown', handleKeyDown)
         }
     }, [togglePlay, toggleFullscreen])
+    
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         const video = videoRef.current
@@ -168,14 +176,22 @@ const LoadMovie = ({ slug }: { slug: string }) => {
     const handleMouseMove = () => {
         setShowControls(true)
         setControlsClickedOnce(false)
+        setIsHideCursor(false)
         if (controlTimeout.current) clearTimeout(controlTimeout.current)
-        controlTimeout.current = setTimeout(() => setShowControls(false), 2000)
+        controlTimeout.current = setTimeout(() => {
+            setShowControls(false)
+            setIsHideCursor(true)
+        }, 2000)
     }
 
+    
+    // format thời gian thành giờ phút giây
     const formatTime = (time: number) => {
-        const minutes = Math.floor(time / 60).toString().padStart(2, '0')
-        const seconds = Math.floor(time % 60).toString().padStart(2, '0')
-        return `${minutes}:${seconds}`
+        const date = new Date(time * 1000)
+        const hours = String(date.getUTCHours()).padStart(2, '0')
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0')
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0')
+        return `${hours}:${minutes}:${seconds}`
     }
 
     const handlePlaybackRate = () => {
@@ -219,13 +235,13 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                                 alt="Loading..."
                                 className="w-25 h-25 object-contain md:w-40 md:h-40 lg:w-50 lg:h-50"
                             />
-                            <span className='text-white text-center text-[12px] md:text-[16px]'>Đang tải phim...</span></div>
+                                <span className='text-white text-center text-[12px] md:text-[16px]'>Đang tải phim...</span></div>
                         </div>
                     )}
                     <video
                         ref={videoRef}
                         tabIndex={0}
-                        className="w-full h-full object-contain"
+                        className={`w-full h-full object-contain ${isHideCursor ? 'cursor-none' : 'cursor-default'}`}
                         onClick={() => {
                             videoRef.current?.focus()
 
@@ -255,7 +271,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                                 min="0"
                                 max={duration || 0}
                                 value={currentTime}
-                                step="0.1"
+                                step="5"
                                 onChange={handleSeek}
                                 onMouseMove={handleSeekHover}
                                 onMouseLeave={handleSeekLeave}
@@ -281,7 +297,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             >
                                 {isPlaying ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
                             </button>
-
+                            
                             <button
                                 onClick={() => {
                                     const video = videoRef.current
@@ -303,35 +319,34 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             >
                                 <FontAwesomeIcon icon={faForward} /> <span className="hidden md:block ml-1">Bỏ quảng cáo</span>
                             </button>
+                     
 
                             <div className="flex items-center gap-2">
-                                {isAndroid ? (
-                                    <button
-                                        onClick={() => {
-                                            const video = videoRef.current
-                                            if (!video) return
-                                            video.muted = !video.muted
-                                            setVolume(video.muted ? 0 : 1)
-                                        }}
-                                        className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 transition"
-                                    >
-                                        {volume === 0 ? <FontAwesomeIcon icon={faVolumeMute} /> : <FontAwesomeIcon icon={faVolumeUp} />}
-                                    </button>
-                                ) : (
-                                    <div className="flex items-center gap-2">
-                                        {volume === 0 ? <FontAwesomeIcon icon={faVolumeMute} /> : <FontAwesomeIcon icon={faVolumeUp} />}
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="1"
-                                            step="0.01"
-                                            value={volume}
-                                            onChange={handleVolume}
-                                            className="accent-lime-300 w-[60%] sm:w-full cursor-pointer"
-                                        />
-                                    </div>
+                                <button
+                                    onClick={() => {
+                                        const video = videoRef.current
+                                        if (!video) return
+                                        video.muted = !video.muted
+                                        setVolume(video.muted ? 0 : 1)
+                                    }}
+                                    className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 transition"
+                                >
+                                    {volume === 0 ? <FontAwesomeIcon icon={faVolumeMute} /> : <FontAwesomeIcon icon={faVolumeUp} />}
+                                </button>
+
+                                {!isAndroid && (
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={volume}
+                                        onChange={handleVolume}
+                                        className="accent-lime-300 w-[60%] sm:w-full cursor-pointer"
+                                    />
                                 )}
                             </div>
+
 
                             <span className="flex-1 text-center whitespace-nowrap">
                                 {formatTime(currentTime)} / {formatTime(duration)}
@@ -356,14 +371,15 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                     </div>
                 </div>
 
-                {movieDetail?.content && (
-                    <div className="bg-gray-800 p-4 rounded-xl shadow text-gray-300">
-                        <h2 className="text-2xl font-semibold text-green-yellow">{movieDetail.name}</h2>
-                        <br />
-                        <h3 className="text-lg font-semibold text-white mb-2">Nội dung</h3>
-                        <p className="text-sm leading-relaxed">{movieDetail.content}</p>
-                    </div>
-                )}
+                <div className="mt-6">
+                <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-300 mb-3">
+                  Nội dung
+                </h3>
+                <div className="bg-slate-800/40 backdrop-blur-sm p-6 rounded-xl border border-slate-700/50">
+                  <p className="text-gray-200 leading-relaxed">{movieDetail?.content || "Nội dung đang được cập nhật..."}</p>
+                </div>
+              </div>
+
             </div>
 
             <div className="w-full lg:w-[30%]">

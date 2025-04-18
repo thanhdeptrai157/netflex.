@@ -5,6 +5,7 @@ const Loading = () => (
       alt="Loading cat"
       className="w-50 h-50 object-contain"
     />
+    <span className="text-white">Đang tải...</span>
   </div>
 )
 

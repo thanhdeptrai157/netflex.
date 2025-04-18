@@ -49,3 +49,42 @@ body {
   }
 
 }
+@layer utilities {
+  .bg-gradient-blue-purple {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600;
+  }
+
+  .bg-gradient-red-orange {
+    @apply bg-gradient-to-r from-red-600 to-orange-500;
+  }
+
+  .text-green-yellow {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-300;
+  }
+
+  .animate-wobble {
+    animation: wobble 1s ease;
+  }
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    transform: translateX(0%);
+  }
+  15% {
+    transform: translateX(-5%) rotate(-5deg);
+  }
+  30% {
+    transform: translateX(4%) rotate(3deg);
+  }
+  45% {
+    transform: translateX(-3%) rotate(-3deg);
+  }
+  60% {
+    transform: translateX(2%) rotate(2deg);
+  }
+  75% {
+    transform: translateX(-1%) rotate(-1deg);
+  }
+}
