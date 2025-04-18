@@ -74,18 +74,18 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
     if (user) {
       const uid = user.uid
       addLikeMovie(uid, movieDetail?.slug as string)
-      toast.success("Thêm vào yêu thích thành công")
+      toast.success("Thêm vào yêu thích thành công", {autoClose: 1000})
       setLikedMovies()
     } else {
       // thong bao nguoi dung dang nhap
-      toast.warning("Vui lòng đăng nhập để thêm vào yêu thích")
+      toast.warning("Vui lòng đăng nhập để thêm vào yêu thích", {autoClose: 1000})
     }
   }
   const handleUnlikeMovie = () => {
     if (user) {
       const uid = user.uid
       removeLikeMovie(uid, movieDetail?.slug as string)
-      toast.success("Xóa khỏi yêu thích thành công")
+      toast.success("Xóa khỏi yêu thích thành công", {autoClose: 1000})
       setLikedMovies()
     }
   }

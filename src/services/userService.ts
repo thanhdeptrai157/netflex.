@@ -67,3 +67,21 @@ export const getUser = async (uid: string) => {
         return null;
     }
 }
+
+export const getFavoriteGenres = async (uid: string): Promise<string[]> => {
+    const userRef = getUserRef(uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+        return userSnap.data().favoriteGenres || [];
+    } else {
+        return [];
+    }
+}
+
+export const saveFavoriteGenres = async (uid: string, genres: string[]) => {
+    const userRef = getUserRef(uid);
+    await setDoc(userRef, {
+        favoriteGenres: genres,
+    }, { merge: true });
+}
+

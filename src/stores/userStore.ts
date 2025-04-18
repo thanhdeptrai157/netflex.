@@ -9,6 +9,7 @@ interface UserStore {
   likedMovies: string[];
   setLikedMovies: () => Promise<void>;
   removeLikedMovie: (movieId: string) => void;
+  clearLikedMovies: () => void;
 }
 
 export const useUserStore = create<UserStore>()(
@@ -18,11 +19,12 @@ export const useUserStore = create<UserStore>()(
       setUser: (user) => set({ user }),
       clearUser: () => set({ user: null }),
       likedMovies: [],
+      // gọi lại hàm getLikedMovies để lấy danh sách phim yêu thích từ server
+      // và cập nhật vào state likedMovies
       setLikedMovies: async () => {
         const { user } = get();
         if (!user?.uid) return;
         const likedMovies = await getLikedMovies(user.uid);
-        console.log(likedMovies);
         set({ likedMovies });
       },
       removeLikedMovie: (movieId) => {
@@ -30,6 +32,7 @@ export const useUserStore = create<UserStore>()(
         const updated = likedMovies.filter((id) => id !== movieId);
         set({ likedMovies: updated });
       },
+      clearLikedMovies: () => set({ likedMovies: [] }),
     }),
     {
       name: "user",

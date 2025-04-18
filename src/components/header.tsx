@@ -10,7 +10,7 @@ import RecentMovie from "./recent-movie"
 import { useUserStore } from "@/stores/userStore"
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
 
 const Header = () => {
   const { categories, countries } = useHeader()
@@ -31,7 +31,6 @@ const Header = () => {
       localStorage.setItem("hasVisitedBefore", "true")
     }
   }, [user])
-
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
