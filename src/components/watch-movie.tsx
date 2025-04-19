@@ -9,7 +9,6 @@ import { faBackward, faForward, faForwardStep, faPause, faPlay, faVolumeMute } f
 import { faVolumeUp } from '@fortawesome/free-solid-svg-icons/faVolumeUp'
 import { useUserStore } from '@/stores/userStore'
 import { addWatchedMovieProgress, getWatchedMovieProgress } from '@/services/userService'
-import { get } from 'axios'
 import { motion, AnimatePresence } from "framer-motion"
 
 const LoadMovie = ({ slug }: { slug: string }) => {
@@ -34,6 +33,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
     const [resumeTime, setResumeTime] = useState<number | null>(null)
     const [resumeEpisode, setResumeEpisode] = useState<string | null>(null)
     const [hasCheckedProgress, setHasCheckedProgress] = useState(false)
+    const [pendingResumeEpisode, setPendingResumeEpisode] = useState<any>(null)
 
     const controlTimeout = useRef<NodeJS.Timeout | null>(null)
     const seekRef = useRef<HTMLInputElement>(null)
@@ -53,9 +53,10 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             if (foundEp) break
                         }
                         if (foundEp) {
-                            setCurrentEpisode(foundEp)
                             setResumeTime(progress.currentTime)
                             setResumeEpisode(progress.episode)
+                            // Lưu lại episode để resume sau
+                            setPendingResumeEpisode(foundEp)
                             setShowResumeModal(true)
                         }
                     }
@@ -70,7 +71,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
         }
         checkProgress()
         return () => { ignore = true }
-    }, [user, movieDetail, episodes, slug, setCurrentEpisode])
+    }, [user, movieDetail, episodes, slug])
 
     useEffect(() => {
         setIsPlaying(false)
@@ -281,16 +282,22 @@ const LoadMovie = ({ slug }: { slug: string }) => {
 
     // Resume handler
     const handleResume = () => {
-        const video = videoRef.current
-        if (video && resumeTime) {
-            video.currentTime = resumeTime
-            video.play()
-            setIsPlaying(true)
+        if (pendingResumeEpisode) {
+            setCurrentEpisode(pendingResumeEpisode)
+            setTimeout(() => {
+                const video = videoRef.current
+                if (video && resumeTime) {
+                    video.currentTime = resumeTime
+                    video.play()
+                    setIsPlaying(true)
+                }
+            }, 200) // Đợi episode load xong mới seek
         }
         setShowResumeModal(false)
     }
     const handleStartOver = () => {
         setShowResumeModal(false)
+        setPendingResumeEpisode(null)
     }
 
     return (
@@ -314,7 +321,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             <p className="mb-6 text-slate-300">Bạn đã xem đến <span className="text-green-400 font-semibold">{formatTime(resumeTime || 0)}</span> trong tập <span className="text-yellow-400 font-semibold">{resumeEpisode}</span>.<br/>Bạn có muốn tiếp tục từ vị trí này không?</p>
                             <div className="flex gap-4 justify-center">
                                 <button
-                                    onClick={handleResume}
+                                    onClick={()=>{handleResume()}}
                                     className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg font-semibold shadow-md transition-all"
                                 >
                                     Tiếp tục xem

@@ -40,7 +40,6 @@ export const getLikedMovies = async (uid: string): Promise<string[]> => {
     const userRef = getUserRef(uid);
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
-        console.log(userSnap.data().likedMovies)
         return userSnap.data().likedMovies || [];
     } else {
         console.log("No such document!");
@@ -132,5 +131,17 @@ export const getAllWatchedMovieProgress = async (
         return userSnap.data().watchedProgress || {};
     } else {
         return {};
+    }
+}
+
+// lấy số lượng phim đã xem
+export const getWatchedMoviesCount = async (uid: string): Promise<number> => {
+    const userRef = getUserRef(uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+        const watchedProgress = userSnap.data().watchedProgress || {};
+        return Object.keys(watchedProgress).length;
+    } else {
+        return 0;
     }
 }

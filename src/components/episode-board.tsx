@@ -15,10 +15,10 @@ const EpisodeList = ({ episodes, name }: { episodes: Episode[]; name: string }) 
   const [isScrollable, setIsScrollable] = useState(false)
   const episodeGridRef = useRef<HTMLDivElement>(null)
   const { setEpisodes, setCurrentEpisode, addWatchedMovie, currentEpisode, movieDetail } = useMovieStore()
-
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
   useEffect(() => {
     const checkScrollable = () => {
-      if (episodeGridRef.current) {
+      if (!isMobile && episodeGridRef.current) {
         setIsScrollable(episodeGridRef.current.scrollHeight > episodeGridRef.current.clientHeight)
       }
     }

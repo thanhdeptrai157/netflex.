@@ -1,4 +1,4 @@
-import { getLikedMovies } from "@/services/userService";
+import { getLikedMovies, getWatchedMoviesCount } from "@/services/userService";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -10,6 +10,9 @@ interface UserStore {
   setLikedMovies: () => Promise<void>;
   removeLikedMovie: (movieId: string) => void;
   clearLikedMovies: () => void;
+  watchedMoviesCount: number;
+  setWatchedMoviesCount: () => Promise<void>;
+
 }
 
 export const useUserStore = create<UserStore>()(
@@ -17,10 +20,9 @@ export const useUserStore = create<UserStore>()(
     (set, get) => ({
       user: null,
       setUser: (user) => set({ user }),
-      clearUser: () => set({ user: null }),
+      clearUser: () =>
+        set({ user: null, likedMovies: [], watchedMoviesCount: 0 }),
       likedMovies: [],
-      // gọi lại hàm getLikedMovies để lấy danh sách phim yêu thích từ server
-      // và cập nhật vào state likedMovies
       setLikedMovies: async () => {
         const { user } = get();
         if (!user?.uid) return;
@@ -33,6 +35,15 @@ export const useUserStore = create<UserStore>()(
         set({ likedMovies: updated });
       },
       clearLikedMovies: () => set({ likedMovies: [] }),
+
+      watchedMoviesCount: 0,
+      setWatchedMoviesCount: async () => {
+        const { user } = get();
+        if (!user?.uid) return;
+        const count = await getWatchedMoviesCount(user.uid);
+        set({ watchedMoviesCount: count });
+      },
+
     }),
     {
       name: "user",

@@ -5,60 +5,40 @@ import { useLikedMovies } from "@/hooks/useLikedMovie"
 import { useUserStore } from "@/stores/userStore"
 import { Clock, Film, Star, User, X } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { getFavoriteGenres, saveFavoriteGenres } from "@/services/userService"
 import { AnimatePresence, motion } from "framer-motion"
 import { useHeaderStore } from "@/stores/headerStore"
-import Pagination from "@/components/pagination"
+import WatchedProgress from "@/components/watched-progress"
+import LikedMoviesSection from "@/components/liked-movies-section"
 
 const MAX_LENGTH = 10
 
-
 const ProfilePage = () => {
   const { user } = useUserStore()
-  const { likedMovies } = useUserStore()
-  const { data, error, loading } = useLikedMovies(likedMovies)
+  const { likedMovies, setWatchedMoviesCount, watchedMoviesCount } = useUserStore()
   const [favoriteGenres, setFavoriteGenres] = useState<string[]>([])
   const [tempGenres, setTempGenres] = useState<string[]>([])
   const [showGenrePopup, setShowGenrePopup] = useState(false)
   const [activeTab, setActiveTab] = useState("watched")
-  const movies = data ? data : []
   const router = useRouter()
-  const [page, setPage] = useState(1)
 
-
-  const totalPages = Math.ceil(movies.length / MAX_LENGTH)
-  const filteredMovies = movies.slice((page - 1) * MAX_LENGTH, page * MAX_LENGTH)
-
+  useEffect(()=>{
+    setWatchedMoviesCount()
+  }, [user])
 
   const { categories } = useHeaderStore()
+
   const genreEmojis: Record<string, string> = {
-    "hanh-dong": "🔥",
-    "mien-tay": "🤠",
-    "tre-em": "🧒",
-    "lich-su": "📜",
-    "co-trang": "🏯",
-    "chien-tranh": "⚔️",
-    "vien-tuong": "👽",
-    "kinh-di": "👻",
-    "tai-lieu": "📚",
-    "bi-an": "🕵️",
-    "phim-18": "🔞",
-    "tinh-cam": "❤️",
-    "tam-ly": "🧠",
-    "the-thao": "🏆",
-    "phieu-luu": "🧭",
-    "am-nhac": "🎵",
-    "gia-dinh": "👨‍👩‍👧‍👦",
-    "hoc-duong": "🏫",
-    "hai-huoc": "😂",
-    "hinh-su": "🚓",
-    "vo-thuat": "🥋",
-    "khoa-hoc": "🔬",
-    "than-thoai": "⚡",
-    "chinh-kich": "🎭",
+    "hanh-dong": "🔥", "mien-tay": "🤠", "tre-em": "🧒", "lich-su": "📜",
+    "co-trang": "🏯", "chien-tranh": "⚔️", "vien-tuong": "👽", "kinh-di": "👻",
+    "tai-lieu": "📚", "bi-an": "🕵️", "phim-18": "🔞", "tinh-cam": "❤️",
+    "tam-ly": "🧠", "the-thao": "🏆", "phieu-luu": "🧭", "am-nhac": "🎵",
+    "gia-dinh": "👨‍👩‍👧‍👦", "hoc-duong": "🏫", "hai-huoc": "😂", "hinh-su": "🚓",
+    "vo-thuat": "🥋", "khoa-hoc": "🔬", "than-thoai": "⚡", "chinh-kich": "🎭",
     "kinh-dien": "🎬",
   }
+
   const genreList = categories.map((genre) => ({
     label: `${genreEmojis[genre.slug] || "🎞️"} ${genre.name}`,
     value: genre.slug,
@@ -123,7 +103,7 @@ const ProfilePage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 "
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -153,7 +133,6 @@ const ProfilePage = () => {
                         : "bg-slate-800 text-slate-300 border-slate-600 hover:bg-slate-700"
                       }`}
                   >
-
                     {genre.label}
                   </button>
                 ))}
@@ -193,17 +172,17 @@ const ProfilePage = () => {
                   <h1 className="text-2xl font-bold mt-4">{user.displayName}</h1>
                   <p className="text-slate-400 sm:text-sm">{user.email}</p>
                 </div>
-
                 <div className="grid grid-cols-2 divide-x divide-slate-700 border-b border-slate-700">
                   <div className="p-4 text-center">
-                    <div className="text-2xl font-bold text-purple-400">42</div>
+                    <div className="text-2xl font-bold text-purple-400">{watchedMoviesCount}</div>
                     <div className="text-xs text-slate-400">Phim đã xem</div>
                   </div>
                   <div className="p-4 text-center">
                     <div className="text-2xl font-bold text-purple-400">
-                      {loading ? <div className="flex items-center justify-center col-span-4">
-                        <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-                      </div> : movies.length}</div>
+                      <div className="flex items-center justify-center col-span-4">
+                        {likedMovies.length}
+                      </div>
+                    </div>
                     <div className="text-xs text-slate-400">Phim yêu thích</div>
                   </div>
                 </div>
@@ -217,7 +196,7 @@ const ProfilePage = () => {
                       Chỉnh sửa
                     </button>
                   </h3>
-                  <div className="flex flex-wrap gap-2 scroll-y-auto max-h-65 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800">
+                  <div className="flex flex-wrap gap-2 max-h-65 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800">
                     {favoriteGenres.map((slug) => {
                       const genre = genreList.find((g) => g.value === slug)
                       return (
@@ -234,66 +213,57 @@ const ProfilePage = () => {
               </div>
             </div>
 
-            <div className="lg:w-2/3">
+            <div className="lg:w-2/3 relative">
               <div className="bg-slate-800 rounded-xl shadow-xl border border-slate-700 mb-3">
                 <div className="flex border-b border-slate-700">
-                  <button
-                    onClick={() => setActiveTab("watched")}
-                    className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${activeTab === "watched"
-                      ? "text-purple-400 border-b-2 border-purple-500"
-                      : "text-slate-400 hover:text-slate-200"
-                      }`}
-                  >
-                    <Film className="w-4 h-4" />
-                    Yêu thích
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("watchlist")}
-                    className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${activeTab === "watchlist"
-                      ? "text-purple-400 border-b-2 border-purple-500"
-                      : "text-slate-400 hover:text-slate-200"
-                      }`}
-                  >
-                    <Clock className="w-4 h-4" />
-                    Đề xuất
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("favorites")}
-                    className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${activeTab === "favorites"
-                      ? "text-purple-400 border-b-2 border-purple-500"
-                      : "text-slate-400 hover:text-slate-200"
-                      }`}
-                  >
-                    <Star className="w-4 h-4" />
-                    Đã xem
-                  </button>
+                  {[
+                    { key: "watched", label: "Yêu thích", icon: <Film className="w-4 h-4" /> },
+                    { key: "watchlist", label: "Đề xuất", icon: <Clock className="w-4 h-4" /> },
+                    { key: "favorites", label: "Đã xem", icon: <Star className="w-4 h-4" /> },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setActiveTab(tab.key)}
+                      className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${activeTab === tab.key
+                        ? "text-purple-400 border-b-2 border-purple-500"
+                        : "text-slate-400 hover:text-slate-200"
+                        }`}
+                    >
+                      {tab.icon}
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 bg-slate-950 h-fit p-6 rounded-xl shadow-xl border border-slate-700">
-                {loading ? (
-                  <div className="flex items-center justify-center col-span-4">
-                    <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="relative min-h-[200px]">
+                <motion.div
+                  animate={{ opacity: activeTab === "watched" ? 1 : 0, position: activeTab === "watched" ? "relative" : "absolute", zIndex: activeTab === "watched" ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`${activeTab === "watched" ? "block" : "hidden"}`}
+                >
+                  <LikedMoviesSection likedMovies={likedMovies} uid={user.uid} />
+                </motion.div>
+
+                <motion.div
+                  animate={{ opacity: activeTab === "favorites" ? 1 : 0, position: activeTab === "favorites" ? "relative" : "absolute", zIndex: activeTab === "favorites" ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`${activeTab === "favorites" ? "block" : "hidden"} p-6 bg-slate-950 rounded-xl`}
+                >
+                  <WatchedProgress uid={user.uid} />
+                </motion.div>
+
+                <motion.div
+                  animate={{ opacity: activeTab === "watchlist" ? 1 : 0, position: activeTab === "watchlist" ? "relative" : "absolute", zIndex: activeTab === "watchlist" ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`${activeTab === "watchlist" ? "block" : "hidden"} p-6 text-white bg-slate-950 rounded-xl flex text-center items-center justify-center`}
+                >
+                  <div>
+                  <img src="/cat.gif" alt="" className="w-[200px] h-[200px]"/>
+                  Tính năng đang phát triển...
                   </div>
-                ) : error ? (
-                  <div className="text-red-500 text-center col-span-5">Đã xảy ra lỗi khi tải phim 😢</div>
-                ) : filteredMovies.length > 0 ? (
-                  filteredMovies.map((movie) => (
-                    <MovieCard key={movie._id} movie={movie} />
-                  ))
-                ) : (
-                  <div className="text-slate-white text-center col-span-5">Chưa có phim nào trong danh sách</div>
-                )}
+                </motion.div>
               </div>
-              {movies.length > 10 && <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={(newPage) => {
-                  setPage(newPage)
-                  window.scrollTo({ top: 0, behavior: 'smooth' })
-                }}
-              />
-              }
             </div>
           </div>
         </div>
