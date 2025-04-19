@@ -9,7 +9,7 @@ export const useAuth = () => {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const {clearUser, clearLikedMovies} = useUserStore()
+    const {clearUser, clearLikedMovies, setLikedMovies} = useUserStore()
 
     // kiểm tra trạng thái đăng nhập của người dùng
     useEffect(() => {
@@ -33,6 +33,7 @@ export const useAuth = () => {
         try {
             const user = await loginWithGoogle()
             setUser(user)  
+            setLikedMovies()
         }
         catch (err: any) {
             setError(err.message)

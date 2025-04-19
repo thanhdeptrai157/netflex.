@@ -31,7 +31,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
   const [showTrailer, setShowTrailer] = useState(false)
   const [isImageLoaded, setIsImageLoaded] = useState(false)
 
-  const {user, likedMovies, removeLikedMovie, setLikedMovies } = useUserStore()
+  const {user, likedMovies, setLikedMovies } = useUserStore()
   const getYoutubeEmbedUrl = (url: string) => {
     const match = url.match(/(?:\?v=|\/embed\/|\.be\/)([a-zA-Z0-9_-]{11})/)
     return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : ""
@@ -89,7 +89,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
       setLikedMovies()
     }
   }
-  console.log(movieDetail?.slug)
+
   if (error) {
     return (
       <div className="text-red-500 text-center mt-8 p-6 bg-slate-800/50 rounded-xl backdrop-blur-sm">
@@ -140,12 +140,6 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                 allowFullScreen
                 className="rounded-xl"
               />
-              <button
-                className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer transition-all duration-300 shadow-lg"
-                onClick={() => setShowTrailer(false)}
-              >
-                <FontAwesomeIcon icon={faX} />
-              </button>
             </motion.div>
           </motion.div>
         )}

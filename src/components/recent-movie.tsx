@@ -1,3 +1,4 @@
+"use client";
 import { useMovieStore } from '@/stores/movieStore';
 import React from 'react';
 import { Movie } from '@/types/movie';

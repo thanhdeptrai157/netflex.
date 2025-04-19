@@ -5,10 +5,14 @@ import { useLikedMovies } from "@/hooks/useLikedMovie"
 import { useUserStore } from "@/stores/userStore"
 import { Clock, Film, Star, User, X } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { getFavoriteGenres, saveFavoriteGenres } from "@/services/userService"
 import { AnimatePresence, motion } from "framer-motion"
 import { useHeaderStore } from "@/stores/headerStore"
+import Pagination from "@/components/pagination"
+
+const MAX_LENGTH = 10
+
 
 const ProfilePage = () => {
   const { user } = useUserStore()
@@ -20,6 +24,12 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("watched")
   const movies = data ? data : []
   const router = useRouter()
+  const [page, setPage] = useState(1)
+
+
+  const totalPages = Math.ceil(movies.length / MAX_LENGTH)
+  const filteredMovies = movies.slice((page - 1) * MAX_LENGTH, page * MAX_LENGTH)
+
 
   const { categories } = useHeaderStore()
   const genreEmojis: Record<string, string> = {
@@ -167,7 +177,7 @@ const ProfilePage = () => {
           <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-slate-900 to-transparent"></div>
         </div>
 
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 -mt-25 relative z-10">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 -mt-30 relative z-10">
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="lg:w-1/4">
               <div className="bg-slate-800 rounded-xl shadow-xl border border-slate-700 overflow-hidden">
@@ -192,12 +202,12 @@ const ProfilePage = () => {
                   <div className="p-4 text-center">
                     <div className="text-2xl font-bold text-purple-400">
                       {loading ? <div className="flex items-center justify-center col-span-4">
-                    <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-                  </div> : movies.length}</div>
+                        <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                      </div> : movies.length}</div>
                     <div className="text-xs text-slate-400">Phim yêu thích</div>
                   </div>
                 </div>
-                <div className="p-6">
+                <div className="p-4">
                   <h3 className="text-sm text-[16px] font-bold mb-3 flex items-center justify-between">
                     Thể loại yêu thích
                     <button
@@ -207,7 +217,7 @@ const ProfilePage = () => {
                       Chỉnh sửa
                     </button>
                   </h3>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 scroll-y-auto max-h-65 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800">
                     {favoriteGenres.map((slug) => {
                       const genre = genreList.find((g) => g.value === slug)
                       return (
@@ -225,7 +235,7 @@ const ProfilePage = () => {
             </div>
 
             <div className="lg:w-2/3">
-              <div className="bg-slate-800 rounded-xl shadow-xl border border-slate-700 mb-6">
+              <div className="bg-slate-800 rounded-xl shadow-xl border border-slate-700 mb-3">
                 <div className="flex border-b border-slate-700">
                   <button
                     onClick={() => setActiveTab("watched")}
@@ -267,20 +277,23 @@ const ProfilePage = () => {
                   </div>
                 ) : error ? (
                   <div className="text-red-500 text-center col-span-5">Đã xảy ra lỗi khi tải phim 😢</div>
-                ) : movies.length > 0 ? (
-                  movies.map((movie) => (
+                ) : filteredMovies.length > 0 ? (
+                  filteredMovies.map((movie) => (
                     <MovieCard key={movie._id} movie={movie} />
                   ))
                 ) : (
                   <div className="text-slate-white text-center col-span-5">Chưa có phim nào trong danh sách</div>
                 )}
               </div>
-
-              {/* <div className="mt-8 text-center">
-                <button className="px-6 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-medium transition-colors">
-                  Xem thêm
-                </button>
-              </div> */}
+              {movies.length > 10 && <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={(newPage) => {
+                  setPage(newPage)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+              />
+              }
             </div>
           </div>
         </div>

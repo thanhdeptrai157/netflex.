@@ -7,10 +7,14 @@ import Hls from 'hls.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBackward, faForward, faForwardStep, faPause, faPlay, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeUp } from '@fortawesome/free-solid-svg-icons/faVolumeUp'
-import { RotateCcw } from 'lucide-react'
+import { useUserStore } from '@/stores/userStore'
+import { addWatchedMovieProgress, getWatchedMovieProgress } from '@/services/userService'
+import { get } from 'axios'
+import { motion, AnimatePresence } from "framer-motion"
 
 const LoadMovie = ({ slug }: { slug: string }) => {
-    const { episodes, movieDetail, currentEpisode } = useMovieStore()
+    const { episodes, movieDetail, currentEpisode, setCurrentEpisode } = useMovieStore()
+    const { user } = useUserStore()
     const videoRef = useRef<HTMLVideoElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
 
@@ -26,11 +30,47 @@ const LoadMovie = ({ slug }: { slug: string }) => {
     const [showTooltip, setShowTooltip] = useState(false)
     const [controlsClickedOnce, setControlsClickedOnce] = useState(false)
     const [isHideCursor, setIsHideCursor] = useState(false)
+    const [showResumeModal, setShowResumeModal] = useState(false)
+    const [resumeTime, setResumeTime] = useState<number | null>(null)
+    const [resumeEpisode, setResumeEpisode] = useState<string | null>(null)
+    const [hasCheckedProgress, setHasCheckedProgress] = useState(false)
 
     const controlTimeout = useRef<NodeJS.Timeout | null>(null)
     const seekRef = useRef<HTMLInputElement>(null)
 
-    const isAndroid = /Android/i.test(navigator.userAgent)
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+
+    useEffect(() => {
+        let ignore = false;
+        async function checkProgress() {
+            if (user && movieDetail && episodes && episodes.length > 0) {
+                try {
+                    const progress = await getWatchedMovieProgress(user.uid, slug)
+                    if (!ignore && progress && progress.episode) {
+                        let foundEp = null
+                        for (const server of episodes) {
+                            foundEp = server.server_data.find(ep => ep.name?.trim() === progress.episode?.trim())
+                            if (foundEp) break
+                        }
+                        if (foundEp) {
+                            setCurrentEpisode(foundEp)
+                            setResumeTime(progress.currentTime)
+                            setResumeEpisode(progress.episode)
+                            setShowResumeModal(true)
+                        }
+                    }
+                } catch (e) {
+                    // ignore error
+                } finally {
+                    setHasCheckedProgress(true)
+                }
+            } else {
+                setHasCheckedProgress(true)
+            }
+        }
+        checkProgress()
+        return () => { ignore = true }
+    }, [user, movieDetail, episodes, slug, setCurrentEpisode])
 
     useEffect(() => {
         setIsPlaying(false)
@@ -85,6 +125,25 @@ const LoadMovie = ({ slug }: { slug: string }) => {
         }
     }, [currentEpisode])
 
+    useEffect(() => {
+        if (!user || !movieDetail || !currentEpisode || !videoRef.current) return;
+    
+        const intervalId = setInterval(() => {
+            const video = videoRef.current;
+            if (video && !video.paused && !video.ended) {
+                const currentTime = Math.floor(video.currentTime);
+                addWatchedMovieProgress(
+                    user.uid,
+                    movieDetail.slug,
+                    currentEpisode.name,
+                    currentTime
+                );
+            }
+        }, 30000); 
+    
+        return () => clearInterval(intervalId);
+    }, [user, movieDetail, currentEpisode]);
+    
 
     const togglePlay = () => {
         const video = videoRef.current
@@ -187,11 +246,11 @@ const LoadMovie = ({ slug }: { slug: string }) => {
 
     // format thời gian thành giờ phút giây
     const formatTime = (time: number) => {
-        const date = new Date(time * 1000)
-        const hours = String(date.getUTCHours()).padStart(2, '0')
-        const minutes = String(date.getUTCMinutes()).padStart(2, '0')
-        const seconds = String(date.getUTCSeconds()).padStart(2, '0')
-        return `${hours}:${minutes}:${seconds}`
+        const date = new Date(time * 1000);
+        const hours = date.getUTCHours();
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+        return hours > 0 ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
     }
 
     const handlePlaybackRate = () => {
@@ -220,8 +279,57 @@ const LoadMovie = ({ slug }: { slug: string }) => {
         setShowTooltip(false)
     }
 
+    // Resume handler
+    const handleResume = () => {
+        const video = videoRef.current
+        if (video && resumeTime) {
+            video.currentTime = resumeTime
+            video.play()
+            setIsPlaying(true)
+        }
+        setShowResumeModal(false)
+    }
+    const handleStartOver = () => {
+        setShowResumeModal(false)
+    }
+
     return (
         <div className="w-full flex flex-col gap-3 lg:flex-row">
+            <AnimatePresence>
+                {showResumeModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                            className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center text-white"
+                        >
+                            <h2 className="text-2xl font-bold mb-2">Tiếp tục xem?</h2>
+                            <p className="mb-6 text-slate-300">Bạn đã xem đến <span className="text-green-400 font-semibold">{formatTime(resumeTime || 0)}</span> trong tập <span className="text-yellow-400 font-semibold">{resumeEpisode}</span>.<br/>Bạn có muốn tiếp tục từ vị trí này không?</p>
+                            <div className="flex gap-4 justify-center">
+                                <button
+                                    onClick={handleResume}
+                                    className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg font-semibold shadow-md transition-all"
+                                >
+                                    Tiếp tục xem
+                                </button>
+                                <button
+                                    onClick={handleStartOver}
+                                    className="bg-slate-700 hover:bg-slate-800 px-5 py-2 rounded-lg font-semibold shadow-md transition-all"
+                                >
+                                    Xem từ đầu
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <div className="w-full lg:w-[75%] flex flex-col gap-3">
                 <div
                     ref={containerRef}
@@ -245,7 +353,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                         onClick={() => {
                             videoRef.current?.focus()
 
-                            if (isAndroid) {
+                            if (isMobile) {
                                 if (!showControls) {
                                     setShowControls(true)
                                     setControlsClickedOnce(true)
@@ -260,6 +368,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             }
                         }}
                     />
+                    
                     <div
                         className={`absolute bottom-0 left-0 right-0 transition-opacity duration-500 p-4 bg-gradient-to-t from-black/80 via-black/30 to-transparent ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
                             }`}
@@ -334,7 +443,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                                     {volume === 0 ? <FontAwesomeIcon icon={faVolumeMute} /> : <FontAwesomeIcon icon={faVolumeUp} />}
                                 </button>
 
-                                {!isAndroid && (
+                                {!isMobile && (
                                     <input
                                         type="range"
                                         min="0"
@@ -348,14 +457,14 @@ const LoadMovie = ({ slug }: { slug: string }) => {
                             </div>
 
 
-                            <span className="flex-1 text-center whitespace-nowrap">
+                            <span className="flex-1 text-center whitespace-nowrap text-xs sm:text-sm">
                                 {formatTime(currentTime)} / {formatTime(duration)}
                             </span>
 
-                            {!isAndroid && (
+                            {!isMobile && (
                                 <button
                                     onClick={handlePlaybackRate}
-                                    className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition"
+                                    className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 transition"
                                 >
                                     {playbackRate}x
                                 </button>
@@ -363,7 +472,7 @@ const LoadMovie = ({ slug }: { slug: string }) => {
 
                             <button
                                 onClick={toggleFullscreen}
-                                className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition"
+                                className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 transition"
                             >
                                 ⛶
                             </button>

@@ -3,19 +3,15 @@ import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebas
 
 const getUserRef = (uid: string) => doc(db, "users", uid);
 
+// them loai phim yeu thich
+// uid: id nguoi dung, genres: mang cac the loai phim
 export const favoriteGenres = async (uid: string, genres: string[]) => {
     const userRef = getUserRef(uid);
     await updateDoc(userRef, {
         favoriteGenres: arrayUnion(...genres),
     });
 }
-// update bio 
-export const updateBio = async (uid: string, bio: string) => {
-    const userRef = getUserRef(uid);
-    await updateDoc(userRef, {
-        bio: bio,
-    });
-}
+
 
 export const addToWatchList = async (uid: string, movieId: string) => {
     const userRef = getUserRef(uid);
@@ -31,6 +27,8 @@ export const removeFromWatchList = async (uid: string, movieId: string) => {
     });
 }
 
+// them phim yeu thich
+// uid: id nguoi dung, movieId: id phim
 export const addLikeMovie = async (uid: string, movieId: string) => {
     const userRef = getUserRef(uid);
     await updateDoc(userRef, {
@@ -85,3 +83,54 @@ export const saveFavoriteGenres = async (uid: string, genres: string[]) => {
     }, { merge: true });
 }
 
+// lưu tiến trình xem phim (slug, episode, currentTime) vào Firestore
+export const addWatchedMovieProgress = async (
+  uid: string,
+  slug: string,
+  episode: string,
+  currentTime: number
+) => {
+  const userRef = getUserRef(uid);
+  // lưu dưới dạng object, mỗi phim là 1 object con
+  await setDoc(
+    userRef,
+    {
+      watchedProgress: {
+        [slug]: {
+          episode,
+          currentTime,
+          updatedAt: Date.now(),
+        },
+      },
+    },
+    { merge: true }
+  );
+};
+
+// lấy tiến trình xem phim từ Firestore
+export const getWatchedMovieProgress = async (
+  uid: string,
+  slug: string
+): Promise<{ episode: string; currentTime: number } | null> => {
+  const userRef = getUserRef(uid);
+  const userSnap = await getDoc(userRef);
+  if (userSnap.exists()) {
+    const watchedProgress = userSnap.data().watchedProgress || {};
+    return watchedProgress[slug] || null;
+  } else {
+    return null;
+  }
+};
+
+// lấy tất cả tiến trình xem phim từ Firestore
+export const getAllWatchedMovieProgress = async (
+    uid: string
+    ): Promise<{ [slug: string]: { episode: string; currentTime: number } }> => {
+    const userRef = getUserRef(uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+        return userSnap.data().watchedProgress || {};
+    } else {
+        return {};
+    }
+}

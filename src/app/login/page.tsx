@@ -253,10 +253,6 @@ const LoginPage = () => {
           </div>
         </div>
       </motion.div>
-
-      <style jsx global>{`
-        
-      `}</style>
     </div>
   )
 }

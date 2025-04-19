@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import MovieService from "@/services/movieService" ;
-import { APP_DOMAIN_CDN_IMAGE } from "@/configs/env";
 import { Episode, Movie, MovieDetail } from "@/types/movie";
 
 
