@@ -5,12 +5,17 @@ import { getAllWatchedMovieProgress } from "@/services/userService"
 import { Clock, Film, Play } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import Pagination from "@/components/pagination"
+
+const MAX_ITEM = 6;
 
 const WatchedProgress = ({ uid }: { uid: string }) => {
     const [watchedProgress, setWatchedProgress] = useState<{
         [slug: string]: { episode: string; currentTime: number }
     }>({})
     const router = useRouter()
+    const [page, setPage] = useState(1)
+    const pageSize = 6
     useEffect(() => {
         const fetchWatchedProgress = async () => {
             const watchedProgressData = await getAllWatchedMovieProgress(uid)
@@ -19,12 +24,18 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
         if (uid) fetchWatchedProgress()
     }, [uid])
 
-    const { data, loading, error } = useWatchedMovies(uid, watchedProgress)
+    // doi thoi gian thanh giay
+    const formatTimeProgress = (time: string): number => {
+        const timePart = time.split(" ")[0]
+        return parseInt(timePart) * 60
+    }
 
+    const { data, loading, error } = useWatchedMovies(uid, watchedProgress)
+      
     if (loading)
         return (
-            <div className="flex justify-center items-center h-40">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-400"></div>
+            <div className="flex items-center justify-center col-span-4 bg-slate-950 h-fit p-6 rounded-xl shadow-xl border border-slate-700">
+                <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
             </div>
         )
 
@@ -34,7 +45,6 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
         router.push(`/movie/${slug}`)
     }
 
-    // Format time from seconds to MM:SS
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60)
         const remainingSeconds = Math.floor(seconds % 60)
@@ -42,15 +52,19 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
     }
     if (!data) {
         return (
-        <div className="text-center p-8 bg-slate-800/50 rounded-lg border border-white/10">
-            <Film className="w-12 h-12 mx-auto mb-3 text-green-400/50" />
-            <div className="text-green-400 text-lg font-medium">Chưa có phim nào</div>
-            <p className="text-white/50 text-sm mt-2">Bạn chưa xem phim nào gần đây</p>
-        </div>
+            <div className="text-center p-8  rounded-lg border border-white/10 bg-slate-950  ">
+                <Film className="w-12 h-12 mx-auto mb-3 text-green-400/50" />
+                <div className="text-green-400 text-lg font-medium">Chưa có phim nào</div>
+                <p className="text-white/50 text-sm mt-2">Bạn chưa xem phim nào gần đây</p>
+            </div>
         )
     }
+    // Phân trang
+    const totalPages = Math.ceil(data.length / pageSize)
+    const pagedData = data.slice((page - 1) * pageSize, page * pageSize)
     return (
-        <div className="space-y-4">
+        <>
+        <div className="space-y-4 bg-slate-950 h-fit rounded-xl p-6 shadow-xl border border-slate-700">
             {data.length === 0 ? (
                 <div className="text-center p-8 bg-slate-800/50 rounded-lg border border-white/10">
                     <Film className="w-12 h-12 mx-auto mb-3 text-green-400/50" />
@@ -58,8 +72,9 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
                     <p className="text-white/50 text-sm mt-2">Bạn chưa xem phim nào gần đây</p>
                 </div>
             ) : (
-                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                    {data.map((movie: any) => {
+                <>
+                <div className="grid gap-4 sm:grid-cols-1 xl:grid-cols-2 ">
+                    {pagedData.map((movie: any) => {
                         const progress = watchedProgress[movie.movie.slug] || {}
                         return (
                             <div
@@ -80,8 +95,8 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
                                 </div>
                                 <div className="flex flex-col justify-between overflow-hidden flex-1">
                                     <div>
-                                        <h3 className="text-green-400 text-sm md:text-lg font-semibold truncate">{movie.movie.name}</h3>
-                                        <div className="text-white/80 text-xs md:text-sm truncate">{movie.movie.origin_name}</div>
+                                        <h3 className="text-green-400 text-sm md:text-lg font-semibold ">{movie.movie.name}</h3>
+                                        <div className="text-white/80 text-xs md:text-sm ">{movie.movie.origin_name}</div>
                                         <p className="text-white/50 text-xs">{movie.movie.year}</p>
                                     </div>
 
@@ -101,7 +116,7 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
                                                 <div className="w-full bg-slate-700 rounded-full h-1 mt-1">
                                                     <div
                                                         className="bg-green-400 h-1 rounded-full"
-                                                        style={{ width: `${Math.min((progress.currentTime / (60 * 60)) * 100, 100)}%` }}
+                                                        style={{ width: `${Math.min((progress.currentTime / (formatTimeProgress(movie.movie.time))) * 100, 100)}%` }}
                                                     ></div>
                                                 </div>
                                             )}
@@ -112,8 +127,17 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
                         )
                     })}
                 </div>
+                
+                </>
             )}
+            
         </div>
+        {totalPages > 1 && (
+            <div className="mt-4 flex justify-center">
+                <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+            </div>
+        )}
+        </>
     )
 }
 

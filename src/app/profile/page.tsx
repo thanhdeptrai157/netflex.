@@ -224,7 +224,7 @@ const ProfilePage = () => {
                     <button
                       key={tab.key}
                       onClick={() => setActiveTab(tab.key)}
-                      className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${activeTab === tab.key
+                      className={`flex items-center gap-1 px-5 sm:gap-2 sm:px-6 py-4 text-sm font-medium transition-colors ${activeTab === tab.key
                         ? "text-purple-400 border-b-2 border-purple-500"
                         : "text-slate-400 hover:text-slate-200"
                         }`}
@@ -248,7 +248,7 @@ const ProfilePage = () => {
                 <motion.div
                   animate={{ opacity: activeTab === "favorites" ? 1 : 0, position: activeTab === "favorites" ? "relative" : "absolute", zIndex: activeTab === "favorites" ? 1 : 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`${activeTab === "favorites" ? "block" : "hidden"} p-6 bg-slate-950 rounded-xl`}
+                  className={`${activeTab === "favorites" ? "block" : "hidden"} rounded-xl`}
                 >
                   <WatchedProgress uid={user.uid} />
                 </motion.div>
