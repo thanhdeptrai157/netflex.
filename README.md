@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Netflex - Xem phim miễn phí
 
-## Getting Started
+Netflex là một ứng dụng web xem phim trực tuyến, xây dựng với Next.js, sử dụng Firebase làm backend lưu trữ dữ liệu và xác thực người dùng. Dự án hỗ trợ các tính năng như: xem phim, lưu tiến trình xem, phim yêu thích, phân trang, tìm kiếm, đề xuất phim, giao diện đẹp và responsive.
 
-First, run the development server:
+## Tính năng nổi bật
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Đăng nhập bằng Google (Firebase Auth)
+- Xem phim lẻ, phim bộ, anime, TV show, hoạt hình...
+- Lưu tiến trình xem phim (resume từ vị trí cũ)
+- Quản lý phim đã xem, phim yêu thích, thể loại yêu thích
+- Tìm kiếm phim theo tên, thể loại, quốc gia, năm
+- Giao diện đẹp, hỗ trợ dark mode, responsive
+- Phân trang cho danh sách phim và lịch sử xem
+- Đề xuất phim dựa trên thể loại yêu thích
+- Xem trailer, thông tin chi tiết từng phim
+- Hiệu ứng động với Framer Motion
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Công nghệ sử dụng
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Next.js 14+ (App Router)](https://nextjs.org/)
+- [React 18+](https://react.dev/)
+- [Firebase (Firestore, Auth)](https://firebase.google.com/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Zustand](https://zustand-demo.pmnd.rs/) (state management)
+- [React Toastify] (thông báo)
+- [Lucide, FontAwesome] (icon)
+- [SwiperJS] (slider phim mới)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

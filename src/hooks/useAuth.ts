@@ -1,15 +1,15 @@
 import { auth } from "@/lib/firebase"
 import { loginWithGoogle, signOutFirebase } from "@/services/firebaseAuthService"
 import { useUserStore } from "@/stores/userStore"
-import { clear } from "console"
-import { sign } from "crypto"
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
+import { getRecommendedMovies } from "@/services/recommendedMoviesService"
+
 
 export const useAuth = () => {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const {clearUser, clearLikedMovies, setLikedMovies, setWatchedMoviesCount} = useUserStore()
+    const {clearUser, clearLikedMovies, setLikedMovies, setWatchedMoviesCount, setRecommendedMovies} = useUserStore()
 
     // kiểm tra trạng thái đăng nhập của người dùng
     useEffect(() => {
@@ -35,6 +35,10 @@ export const useAuth = () => {
             setUser(user)  
             setLikedMovies()
             setWatchedMoviesCount()
+            // Gọi recommend và lưu vào store
+            const recommended = await getRecommendedMovies(user.uid)
+            console.log("Recommended movies:", recommended)
+            setRecommendedMovies(recommended)
         }
         catch (err: any) {
             setError(err.message)

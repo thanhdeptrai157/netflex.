@@ -14,7 +14,12 @@ const SeriesMovie = () => {
         <div className="mt-10 w-full">
             <div className="flex items-center ">
                 <h2 className="text-white text-xl font-bold mb-0">Phim Bộ</h2>
-                <button className="text-white ml-auto items-center bg-gradient-red-orange px-3 rounded-sm cursor-pointer" onClick={handleLoadMore}>Xem thêm</button>
+                <button
+                    className="ml-auto flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white font-semibold shadow-lg hover:brightness-110 transition-all duration-300 cursor-pointer hover:transform hover:scale-105"
+                    onClick={handleLoadMore}
+                >
+                    <span>🔥 Xem thêm</span>
+                </button>
             </div>
             <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-3 mt-5 '>
                 {loading ? (

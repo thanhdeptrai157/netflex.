@@ -139,7 +139,7 @@ const Header = () => {
                         logout()
                         toast.success("Đăng xuất thành công 🎉", { autoClose: 1000 })
                       }}
-                      className="flex items-center px-4 py-3 text-red-500 hover:bg-slate-700 transition-colors w-full text-left"
+                      className="flex items-center px-4 py-3 text-red-500 hover:bg-slate-700 transition-colors w-full text-left cursor-pointer"
                     >
                       <FontAwesomeIcon icon={faSignOutAlt} className="mr-3 w-4" />
                       <span>Đăng xuất</span>

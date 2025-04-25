@@ -27,7 +27,7 @@ const MovieCard = ({ movie }: { movie: Movie }) => {
           </button>
         </div>
         <img src={movie.poster_url} alt={movie.name} className="w-full block object-cover aspect-[4/5] transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:opacity-60"
-         />
+         loading='lazy'/>
         <span className='font-bold absolute top-1 left-2 text-white bg-gradient-blue-purple p-[2px] rounded-md px-2 text-[13px] max-w-[90%] truncate'>
           {movie.quality ? `${movie.quality} + ${movie.lang}` : `Năm ${movie.year}`}
         </span>

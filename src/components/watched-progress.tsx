@@ -15,7 +15,6 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
     }>({})
     const router = useRouter()
     const [page, setPage] = useState(1)
-    const pageSize = 6
     useEffect(() => {
         const fetchWatchedProgress = async () => {
             const watchedProgressData = await getAllWatchedMovieProgress(uid)
@@ -31,7 +30,6 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
     }
 
     const { data, loading, error } = useWatchedMovies(uid, watchedProgress)
-      
     if (loading)
         return (
             <div className="flex items-center justify-center col-span-4 bg-slate-950 h-fit p-6 rounded-xl shadow-xl border border-slate-700">
@@ -60,8 +58,8 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
         )
     }
     // Phân trang
-    const totalPages = Math.ceil(data.length / pageSize)
-    const pagedData = data.slice((page - 1) * pageSize, page * pageSize)
+    const totalPages = Math.ceil(data.length / MAX_ITEM)
+    const pagedData = data.slice((page - 1) * MAX_ITEM, page * MAX_ITEM)
     return (
         <>
         <div className="space-y-4 bg-slate-950 h-fit rounded-xl p-6 shadow-xl border border-slate-700">
