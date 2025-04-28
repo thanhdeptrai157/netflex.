@@ -1,3 +1,4 @@
+import MovieComments from '@/components/movie-comment';
 import NewUpdateMovie from '@/components/new-update-movie';
 import LoadMovie from '@/components/watch-movie';
 import { fetchMovieDetail } from '@/lib/fetchDetailCategory';
@@ -30,14 +31,19 @@ export const generateMetadata = async ({ params }: { params: Promise<{ slug: str
     };
   }
 };
-const WatchMovie = async ({ params }: { params: Promise<{ slug: string}> }) => {
-    const { slug } = await params;
-    return (
-        <div className="flex flex-wrap gap-5 bg-slate-900 h-fit px-3 sm:px-4 lg:px-6 py-20 w-full">
-          <LoadMovie slug={slug} />
-          <NewUpdateMovie />
+const WatchMovie = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
+  return (
+    <>
+      <div className="flex flex-wrap gap-5 bg-slate-900 h-fit px-3 sm:px-4 lg:px-6 py-20 w-full">
+        <LoadMovie slug={slug} />
+        <div className="w-full lg:w-[71%]">
+          <MovieComments slug={slug} />
         </div>
-      );
+        <NewUpdateMovie /> 
+      </div>
+    </>
+  );
 }
 
 export default WatchMovie
