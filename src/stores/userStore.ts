@@ -62,24 +62,6 @@ export const useUserStore = create<UserStore>()(
     }),
     {
       name: "user",
-      // Thêm migrate để kiểm tra hạn khi hydrate
-      migrate: (persistedState: any, version) => {
-        if (persistedState?.user && persistedState?.userTimestamp) {
-          const now = Date.now();
-          if (now - persistedState.userTimestamp > 5*1000*60) {
-            // Quá hạn, xóa user
-            return { 
-              ...persistedState, 
-              user: null, 
-              userTimestamp: null, 
-              likedMovies: [], 
-              watchedMoviesCount: 0,
-              recommendedMovies: []
-            };
-          }
-        }
-        return persistedState;
-      },
     }
   )
 );

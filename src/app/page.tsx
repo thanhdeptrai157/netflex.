@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import NewUpdateMovie from "@/components/new-update-movie";
 import RecentMovie from "@/components/recent-movie";
 import SeriesMovie from "@/components/series-movies";
 import Slider from "@/components/slider";
 import { motion, AnimatePresence } from "framer-motion";
+import { checkSessionInterval } from "@/services/sessionManager";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,11 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    checkSessionInterval();
+  }, []);
+
+  
   return (
     <div className="relative">
       <AnimatePresence>
