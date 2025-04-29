@@ -34,11 +34,17 @@ const ProfilePage = () => {
 
   // xáo trộn danh sách phim đề xuất
   // và lấy ra tối đa MAX_LENGTH phim
-  useEffect(() => {
+
+  // hàm xáo trộn
+  const shuffleMovies = () => {
     if (recommendedMovies.length > 0) {
       const shuffled = [...recommendedMovies].sort(() => 0.5 - Math.random())
       setShuffledRecommended(shuffled.slice(0, MAX_LENGTH))
     }
+  }
+
+  useEffect(() => {
+    shuffleMovies()
   }, [recommendedMovies])
 
 
@@ -157,10 +163,9 @@ const ProfilePage = () => {
                     key={genre.label}
                     onClick={() => toggleGenre(genre.value)}
                     className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium border transition-colors flex items-center gap-1
-                      ${
-                        tempGenres.includes(genre.value)
-                          ? "bg-purple-600 text-white border-purple-600"
-                          : "bg-slate-800 text-slate-300 border-slate-600 hover:bg-slate-700"
+                      ${tempGenres.includes(genre.value)
+                        ? "bg-purple-600 text-white border-purple-600"
+                        : "bg-slate-800 text-slate-300 border-slate-600 hover:bg-slate-700"
                       }`}
                   >
                     {genre.label}
@@ -240,7 +245,7 @@ const ProfilePage = () => {
 
             <div className="lg:w-3/4 w-full">
               <div className="bg-slate-800 rounded-xl shadow-xl border border-slate-700 mb-3 overflow-x-auto">
-                <div className="flex border-b border-slate-700 min-w-max">
+                <div className="flex border-b border-slate-700 min-w-max justify-center gap-4 md:justify-start">
                   {[
                     { key: "watched", label: "Yêu thích", icon: <Film className="w-4 h-4" /> },
                     { key: "watchlist", label: "Đề xuất", icon: <Clock className="w-4 h-4" /> },
@@ -249,11 +254,10 @@ const ProfilePage = () => {
                     <button
                       key={tab.key}
                       onClick={() => setActiveTab(tab.key)}
-                      className={`flex items-center gap-1 px-4 sm:px-5 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-                        activeTab === tab.key
-                          ? "text-purple-400 border-b-2 border-purple-500"
-                          : "text-slate-400 hover:text-slate-200"
-                      }`}
+                      className={`flex items-center gap-1 px-4 sm:px-5 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${activeTab === tab.key
+                        ? "text-purple-400 border-b-2 border-purple-500"
+                        : "text-slate-400 hover:text-slate-200"
+                        }`}
                     >
                       {tab.icon}
                       <span className="ml-1">{tab.label}</span>
@@ -294,16 +298,32 @@ const ProfilePage = () => {
                     zIndex: activeTab === "watchlist" ? 1 : 0,
                   }}
                   transition={{ duration: 0.3 }}
-                  className={`${
-                    activeTab === "watchlist" ? "block" : "hidden"
-                  } p-4 sm:p-6 bg-slate-950 rounded-xl w-full`}
+                  className={`${activeTab === "watchlist" ? "block" : "hidden"
+                    } p-4 sm:p-6 bg-slate-950 rounded-xl w-full`}
                 >
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 ">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-bold">Phim đề xuất</h2>
+                    {shuffledRecommended.length > 0 &&
+                    <button
+                      onClick={shuffleMovies}
+                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm font-medium transition-all"
+                      disabled={shuffledRecommended.length == 0}
+                    >
+                      Đề xuất khác
+                    </button>}
+                  </div>
+                  {shuffledRecommended.length > 0 ? (<
+                    div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 ">
                     {shuffledRecommended.map((movie) => (
                       <RecommendedMovieCard key={movie._id} movie={movie} />
                     ))}
-                  </div>
+                  </div>) 
+                  : 
+                  (<div className="flex items-center justify-center h-full flex-col">
+                    <img src="/cat.gif" alt="" className="w-50 "/>
+                    <p>Hệ thống đang đề xuất phim cho bạn....</p>
+                  </div>)
+                  }
                 </motion.div>
               </div>
             </div>

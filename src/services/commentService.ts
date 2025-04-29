@@ -25,7 +25,7 @@ export const getComments = async (movieSlug: string) => {
         const q = query(
             collection(db, "comments"),
             where("movieSlug", "==", movieSlug),
-            orderBy("createdAt", "asc")
+            orderBy("createdAt", "asc"),
         );
         const querySnapshot = await getDocs(q);
         const comments: Comment[] = [];

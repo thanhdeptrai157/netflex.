@@ -51,10 +51,10 @@ export default function MovieComments({ slug }: MovieCommentsProps) {
                 </div>
                 <button
                     type="submit"
-                    disabled={isLoading || !newComment.trim()}
-                    className={`w-full md:w-auto px-6 py-2.5 rounded-lg text-white font-semibold transition-all duration-200 ${isLoading || !newComment.trim()
-                            ? "bg-gray-500 cursor-not-allowed opacity-70"
-                            : "bg-red-600 hover:bg-red-700 hover:shadow-lg"
+                    disabled={isPosting || !newComment.trim()}
+                    className={`w-full md:w-auto px-6 py-2.5 rounded-lg text-white font-semibold transition-all duration-200 ${isPosting || !newComment.trim()
+                        ? "bg-gray-500 cursor-not-allowed opacity-70"
+                        : "bg-red-600 hover:bg-red-700 hover:shadow-lg"
                         }`}
                 >
                     {isPosting ? (
@@ -79,42 +79,50 @@ export default function MovieComments({ slug }: MovieCommentsProps) {
                     )}
                 </button>
             </form>
-
-            <div className="space-y-4">
-                <AnimatePresence>
-                    {comments.length > 0 ? (
-                        comments.map((comment, idx) => (
-                            <motion.div
-                                key={idx}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="flex gap-4 p-4 bg-slate-700 rounded-lg hover:bg-slate-650 transition-colors"
-                            >
-                                <div className="h-12 w-12 bg-gradient-to-br from-red-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
-                                    <img src={comment.avatar} alt={comment.userName} className="rounded-full" />
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
-                                        <h3 className="font-medium text-white text-base">{comment.userName === user?.displayName ? "Bạn" : comment.userName }</h3>
-                                        <span className="text-xs text-slate-400 sm:text-right">{formatDate(comment.createdAt)}</span>
+            {isLoading ? 
+            (
+                Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                        key={i}
+                        className="bg-gray-700 rounded-lg w-full animate-pulse h-[100px] mb-4"
+                    />
+                ))
+            ) :
+                (<div className="space-y-4">
+                    <AnimatePresence>
+                        {comments.length > 0 ? (
+                            comments.map((comment, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="flex gap-4 p-4 bg-slate-700 rounded-lg hover:bg-slate-650 transition-colors"
+                                >
+                                    <div className="h-12 w-12 bg-gradient-to-br from-red-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
+                                        <img src={comment.avatar} alt={comment.userName} className="rounded-full" />
                                     </div>
-                                    <p className="text-slate-200 mt-2 leading-relaxed">{comment.content}</p>
-                                </div>
-                            </motion.div>
-                        ))
-                    ) : (
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="text-slate-400 text-center py-8 border border-dashed border-slate-700 rounded-lg"
-                        >
-                            Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
-                        </motion.p>
-                    )}
-                </AnimatePresence>
-            </div>
+                                    <div className="flex-1">
+                                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
+                                            <h3 className="font-medium text-white text-base">{comment.uid === user?.uid ? "Bạn" : comment.userName}</h3>
+                                            <span className="text-xs text-slate-400 sm:text-right">{formatDate(comment.createdAt)}</span>
+                                        </div>
+                                        <p className="text-slate-200 mt-2 leading-relaxed">{comment.content}</p>
+                                    </div>
+                                </motion.div>
+                            ))
+                        ) : (
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="text-slate-400 text-center py-8 border border-dashed border-slate-700 rounded-lg"
+                            >
+                                Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
+                            </motion.p>
+                        )}
+                    </AnimatePresence>
+                </div>)}
         </div>
     )
 }

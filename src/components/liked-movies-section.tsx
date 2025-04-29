@@ -24,7 +24,7 @@ const LikedMoviesSection = ({ likedMovies, uid }: { likedMovies: string[]; uid: 
   if (error) return <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400">{error}</div>
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 bg-slate-950 h-fit p-6 rounded-xl shadow-xl border border-slate-700">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 bg-slate-950 h-fit p-6 rounded-xl shadow-xl border border-slate-700">
         {filteredMovies.length > 0 ? (
           filteredMovies.map((movie) => (
             <MovieCard key={movie._id} movie={movie} />
