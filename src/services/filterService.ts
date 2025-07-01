@@ -1,3 +1,4 @@
+import { LangList, TypeList } from "@/types/filter";
 import axios from "../configs/axios";
 
 

@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import ReactPaginate from 'react-paginate'
-
+import React from 'react'
+ 
 import { Movie } from '@/types/movie'
 import MovieCard from './movie-card'
 

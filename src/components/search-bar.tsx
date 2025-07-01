@@ -1,8 +1,7 @@
 import useSearch from '@/hooks/useSearch';
 import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { use, useEffect, useRef, useState } from 'react';
-import Image from 'next/image'; // nếu dùng Next.js
+import React, { useEffect, useRef, useState } from 'react';
 import { Movie } from '@/types/movie';
 import SearchResultItems from './search-result-items';
 import { useRouter } from 'next/navigation';
@@ -13,7 +12,7 @@ const SearchBar = () => {
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [query, setQuery] = useState('');
-    const {allSearchResults,  searchResults, loading, error } = useSearch(query, 1,  500); // debounce 0.5s
+    const { allSearchResults, searchResults, loading, error } = useSearch(query, 1, 500); // debounce 0.5s
     const [inputExpanded, setInputExpanded] = useState(false);
 
 
@@ -105,13 +104,15 @@ const SearchBar = () => {
             {open && inputExpanded && query.trim() !== '' && (
                 <div className="absolute z-50 mt-2 w-full bg-gray-900 rounded-md shadow-lg max-h-100 overflow-y-auto
                 scrollbar-thumb-green-500 scrollbar-track-gray-800 scrollbar-thin">
+
+                    
                     {loading && (
                         <div className="flex items-center justify-center p-4">
                             <FontAwesomeIcon icon={faSpinner} spin className="text-white text-xl animate-spin" />
                         </div>
                     )}
                     {error && <div className="p-4 text-red-500">Đã xảy ra lỗi.</div>}
-                    {!loading && !error && searchResults?.length == 0 && (
+                    {!loading && !error && query.trim().length > 1 && searchResults?.length === 0 && (
                         <div className="p-4 text-gray-500">Không tìm thấy kết quả nào.</div>
                     )}
                     {!loading && !error && searchResults?.map((movie: Movie) => (

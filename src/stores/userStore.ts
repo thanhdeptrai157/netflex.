@@ -3,8 +3,6 @@ import { MovieDetail } from "@/types/movie";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-const EXPIRE_HOURS = 3;
-const EXPIRE_MS = EXPIRE_HOURS * 60 * 60 * 1000;
 
 interface UserStore {
   user: User | null;

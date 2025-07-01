@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import MovieService from "@/services/movieService" ;
-import { APP_DOMAIN_CDN_IMAGE } from "@/configs/env";
-import { Episode, Movie, MovieDetail } from "@/types/movie";
+import { Episode, MovieDetail } from "@/types/movie";
+import { toast } from "react-toastify";
 
 export interface MovieDetailResponse {
     status: boolean;
@@ -22,6 +22,7 @@ export const useMovie = (slug: string) => {
                 setData(response);
                }
             } catch (err) {
+                toast.error("Có lỗi xảy ra khi tải phim." + (err instanceof Error ? `: ${err.message}` : ""));
                 setError("Có lỗi xảy ra khi tải phim.");
             } finally {
                 setLoading(false);

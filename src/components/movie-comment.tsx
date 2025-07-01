@@ -5,6 +5,7 @@ import type React from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useComments } from "@/hooks/useComments"
 import { useUserStore } from "@/stores/userStore"
+import Image from "next/image"
 
 
 interface MovieCommentsProps {
@@ -101,7 +102,7 @@ export default function MovieComments({ slug }: MovieCommentsProps) {
                                     className="flex gap-4 p-4 bg-slate-700 rounded-lg hover:bg-slate-650 transition-colors"
                                 >
                                     <div className="h-12 w-12 bg-gradient-to-br from-red-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
-                                        <img src={comment.avatar} alt={comment.userName} className="rounded-full" />
+                                        <Image src={comment.avatar} alt={comment.userName} className="rounded-full" />
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">

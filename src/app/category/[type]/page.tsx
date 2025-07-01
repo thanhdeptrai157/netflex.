@@ -1,7 +1,8 @@
 
 import CategoryPageClient from '@/components/client-category-page'
-import { fetchCategoryMetaData } from '@/lib/fetchListMovie'
+import { fetchCategoryMetaData } from '@/lib/fetchDetailCategory'
 import { Metadata } from 'next'
+import { toast } from 'react-toastify';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ type: string }> }): Promise<Metadata> => {
   try {
@@ -19,6 +20,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ type: str
         },
     };
   } catch (err) {
+    toast.error("Có lỗi xảy ra khi tải thông tin danh mục." + (err instanceof Error ? `: ${err.message}` : ""));
     return {
       title: "Phim không tồn tại | Netflex",
       description: "Không tìm thấy thông tin phim.",

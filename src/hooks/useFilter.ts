@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Movie } from "@/types/movie";
-import MovieService from "@/services/movieService";
 import { APP_DOMAIN_CDN_IMAGE } from "@/configs/env";
 import { getMoviesByFilter } from "@/services/filterService";
+import { LangList, TypeList } from "@/types/filter";
 
 interface UseFilterProps {
   type_list: TypeList;
@@ -51,12 +51,20 @@ export const useFilter = ({
           year,
         }) as {
           status: string;
-          data: any;
+          data: {
+            items: Movie[];
+            params: {
+              pagination: {
+                totalPages: number;
+                totalItems: number;
+              };
+            };
+          };
         };
 
         const data = response.data;
 
-        if (response.status === "success") {
+        if (response.status) {
           const formattedMovies = data.items.map((item: Movie) => ({
             ...item,
             poster_url: item.poster_url?.startsWith(APP_DOMAIN_CDN_IMAGE ?? "")

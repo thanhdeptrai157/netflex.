@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useMovie } from "@/hooks/useMovie"
-import type { EpisodeData, Movie } from "@/types/movie"
-import React, { useEffect, useState } from "react"
-import { useMovieStore } from "@/stores/movieStore"
-import { useRouter } from "next/navigation"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useMovie } from "@/hooks/useMovie";
+import type { EpisodeData, Movie } from "@/types/movie";
+import React, { useEffect, useState } from "react";
+import { useMovieStore } from "@/stores/movieStore";
+import { useRouter } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBookmark,
   faCalendarDays,
@@ -14,95 +14,98 @@ import {
   faLanguage,
   faStar,
   faTimes,
-  faX,
-} from "@fortawesome/free-solid-svg-icons"
-import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
-import { addLikeMovie, getLikedMovies, removeLikeMovie } from "@/services/userService"
-import { useUserStore } from "@/stores/userStore"
-import { toast } from "react-toastify"
+} from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { addLikeMovie, removeLikeMovie } from "@/services/userService";
+import { useUserStore } from "@/stores/userStore";
+import { toast } from "react-toastify";
+import Image from "next/image";
 
 const MovieDetailComponent = ({ slug }: { slug: string }) => {
-  const { loading, error, data } = useMovie(slug)
-  const movie = data?.movie
-  const episodesServer = data?.episodes ?? []
-  const router = useRouter()
-  const { setMovieDetail } = useMovieStore()
-  const [showTrailer, setShowTrailer] = useState(false)
-  const [isImageLoaded, setIsImageLoaded] = useState(false)
+  const { loading, error, data } = useMovie(slug);
+  const movie = data?.movie;
+  const episodesServer = data?.episodes ?? [];
+  const router = useRouter();
+  const { setMovieDetail } = useMovieStore();
+  const [showTrailer, setShowTrailer] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  const {user, likedMovies, setLikedMovies } = useUserStore()
+  const { user, likedMovies, setLikedMovies } = useUserStore();
   const getYoutubeEmbedUrl = (url: string) => {
-    const match = url.match(/(?:\?v=|\/embed\/|\.be\/)([a-zA-Z0-9_-]{11})/)
-    return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : ""
-  }
+    const match = url.match(/(?:\?v=|\/embed\/|\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : "";
+  };
 
-  
   // lấy 3 tập mới nhất
   const newEps = episodesServer[0]?.server_data?.slice(
     Math.max(0, (episodesServer[0]?.server_data?.length || 0) - 3),
-    episodesServer[0]?.server_data?.length,
-  )
+    episodesServer[0]?.server_data?.length
+  );
 
   useEffect(() => {
     if (data) {
-      setMovieDetail(data.movie)
+      setMovieDetail(data.movie);
     }
-  }, [data, setMovieDetail])
+  }, [data, setMovieDetail]);
 
   // lấy từ store ra để lưu
-  const { setEpisodes, setCurrentEpisode, addWatchedMovie, movieDetail } = useMovieStore()
+  const { setEpisodes, setCurrentEpisode, addWatchedMovie, movieDetail } =
+    useMovieStore();
 
   // lưu store và chuyển trang
   const handleSaveStore = (e: EpisodeData) => {
-    setEpisodes(episodesServer)
-    setCurrentEpisode(e)
-    const watchPath = `/watch/${slug}`
-    router.push(watchPath)
-    addWatchedMovie(movieDetail as Movie)
-  }
+    setEpisodes(episodesServer);
+    setCurrentEpisode(e);
+    const watchPath = `/watch/${slug}`;
+    router.push(watchPath);
+    addWatchedMovie(movieDetail as Movie);
+  };
 
   const handleWatchNow = () => {
-    setEpisodes(episodesServer)
-    setCurrentEpisode(episodesServer[0].server_data[0])
-    const watchPath = `/watch/${slug}`
-    router.push(watchPath)
-    addWatchedMovie(movieDetail as Movie)
-  }
+    setEpisodes(episodesServer);
+    setCurrentEpisode(episodesServer[0].server_data[0]);
+    const watchPath = `/watch/${slug}`;
+    router.push(watchPath);
+    addWatchedMovie(movieDetail as Movie);
+  };
 
   const handleLikeMovie = () => {
     if (user) {
-      const uid = user.uid
-      addLikeMovie(uid, movieDetail?.slug as string)
-      toast.success("Thêm vào yêu thích thành công", {autoClose: 1000})
-      setLikedMovies()
+      const uid = user.uid;
+      addLikeMovie(uid, movieDetail?.slug as string);
+      toast.success("Thêm vào yêu thích thành công", { autoClose: 1000 });
+      setLikedMovies();
     } else {
       // thong bao nguoi dung dang nhap
-      toast.warning("Vui lòng đăng nhập để thêm vào yêu thích", {autoClose: 1000})
+      toast.warning("Vui lòng đăng nhập để thêm vào yêu thích", {
+        autoClose: 1000,
+      });
     }
-  }
+  };
   const handleUnlikeMovie = () => {
     if (user) {
-      const uid = user.uid
-      removeLikeMovie(uid, movieDetail?.slug as string)
-      toast.success("Xóa khỏi yêu thích thành công", {autoClose: 1000})
-      setLikedMovies()
+      const uid = user.uid;
+      removeLikeMovie(uid, movieDetail?.slug as string);
+      toast.success("Xóa khỏi yêu thích thành công", { autoClose: 1000 });
+      setLikedMovies();
     }
-  }
+  };
 
   if (error) {
     return (
       <div className="text-red-500 text-center mt-8 p-6 bg-slate-800/50 rounded-xl backdrop-blur-sm">
         <FontAwesomeIcon icon={faTimes} className="text-4xl mb-4" />
         <p className="text-xl">Đã có lỗi xảy ra khi tải dữ liệu phim.</p>
-        <p className="text-sm text-gray-400 mt-2">Vui lòng thử lại sau hoặc chọn phim khác.</p>
+        <p className="text-sm text-gray-400 mt-2">
+          Vui lòng thử lại sau hoặc chọn phim khác.
+        </p>
       </div>
-    )
+    );
   }
 
   return (
     <div className="w-full relative">
-
       {!loading && movie?.poster_url && (
         <div className="absolute inset-0 -z-10 opacity-20">
           <div
@@ -112,7 +115,6 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/95 to-slate-900"></div>
         </div>
       )}
-
 
       <AnimatePresence>
         {showTrailer && (
@@ -146,7 +148,6 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
       </AnimatePresence>
 
       <div className="max-w-8xl flex flex-col lg:flex-row gap-10 w-full">
-
         <div className="w-full lg:w-[40%] xl:w-[30%] relative flex justify-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -157,14 +158,17 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
             {loading ? (
               <div className="w-full aspect-[2/3] bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl animate-pulse shadow-xl" />
             ) : (
-              <div className="relative overflow-hidden rounded-xl shadow-[0_0_25px_rgba(0,0,0,0.3)] group">
-
+              <div className="relative aspect-[2/3] overflow-hidden rounded-xl shadow-[0_0_25px_rgba(0,0,0,0.3)] group">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
 
-                <img
+                <Image
                   src={movie?.poster_url || "/placeholder.svg"}
-                  alt={movie?.name}
-                  className={`w-full h-auto rounded-xl aspect-[2/3] object-cover transition-all duration-500 group-hover:scale-105 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
+                  alt={movie?.name || "Movie Poster"}
+                  className={`rounded-xl object-cover transition-all duration-500 group-hover:scale-105 ${
+                    isImageLoaded ? "opacity-100" : "opacity-0"
+                  }`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   onLoad={() => setIsImageLoaded(true)}
                 />
 
@@ -185,7 +189,10 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                       className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-3 md:py-3 md:px-5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-purple-500/30 transition-all duration-300 text-sm md:text-base cursor-pointer"
                       onClick={() => setShowTrailer(true)}
                     >
-                      <FontAwesomeIcon icon={faCirclePlay} className="text-lg" />
+                      <FontAwesomeIcon
+                        icon={faCirclePlay}
+                        className="text-lg"
+                      />
                       <span>Xem trailer</span>
                     </motion.button>
                     <motion.button
@@ -244,26 +251,35 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                 <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-300">
                   {movie?.name}
                 </h1>
-                <h2 className="text-xl font-medium text-gray-400 italic">{movie?.origin_name}</h2>
+                <h2 className="text-xl font-medium text-gray-400 italic">
+                  {movie?.origin_name}
+                </h2>
 
                 {movie?.status && (
                   <div className="inline-block bg-gradient-to-r from-green-600 to-green-500 text-white text-sm font-medium px-3 py-1 rounded-full mt-2">
                     {movie.status}
                   </div>
                 )}
-                
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-[60%_40%] gap-7 mt-1 bg-slate-800/40 backdrop-blur-sm p-6 rounded-xl border border-slate-700/50">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <FontAwesomeIcon icon={faCalendarDays} className="text-green-400 w-5" />
+                    <FontAwesomeIcon
+                      icon={faCalendarDays}
+                      className="text-green-400 w-5"
+                    />
                     <span className="font-medium text-gray-300">Năm:</span>
-                    <span className="text-white">{movie?.year == 0 ? "Đang cập nhật" : movie?.year}</span>
+                    <span className="text-white">
+                      {movie?.year == 0 ? "Đang cập nhật" : movie?.year}
+                    </span>
                   </div>
 
                   <div className="flex items-start gap-2 ">
-                    <FontAwesomeIcon icon={faStar} className="text-yellow-400 w-5 mt-1" />
+                    <FontAwesomeIcon
+                      icon={faStar}
+                      className="text-yellow-400 w-5 mt-1"
+                    />
                     <span className="font-medium text-gray-300">Thể loại:</span>
                     <div className="flex flex-wrap gap-1">
                       {movie?.category?.map((item, idx) => (
@@ -281,16 +297,23 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                   </div>
 
                   <p className="flex items-center gap-2">
-                    <FontAwesomeIcon icon={faFilm} className="text-blue-400 w-5" />
+                    <FontAwesomeIcon
+                      icon={faFilm}
+                      className="text-blue-400 w-5"
+                    />
                     <span className="font-medium text-gray-300">Số tập:</span>
                     <span className="text-white">
-                      {movie?.episode_total == "0" ? "Đang cập nhật" : movie?.episode_total}
+                      {movie?.episode_total == "0"
+                        ? "Đang cập nhật"
+                        : movie?.episode_total}
                     </span>
                   </p>
 
                   <p className="text-gray-300">
                     <span className="font-medium">Đạo diễn:</span>
-                    <span className="text-white ml-2">{movie?.director || "Đang cập nhật"}</span>
+                    <span className="text-white ml-2">
+                      {movie?.director || "Đang cập nhật"}
+                    </span>
                   </p>
 
                   <div className="text-gray-300">
@@ -298,7 +321,10 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                     <div className="text-white mt-1 flex flex-wrap gap-1">
                       {movie?.actor?.length ? (
                         movie.actor.map((actor, idx) => (
-                          <span key={idx} className="inline-block bg-slate-700/70 px-2 py-1 rounded-md text-sm">
+                          <span
+                            key={idx}
+                            className="inline-block bg-slate-700/70 px-2 py-1 rounded-md text-sm"
+                          >
                             {actor}
                           </span>
                         ))
@@ -312,23 +338,34 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                 <div className="space-y-3">
                   <p className="text-gray-300">
                     <span className="font-medium">Thời lượng:</span>
-                    <span className="text-white ml-2">{movie?.time || "Đang cập nhật"}</span>
+                    <span className="text-white ml-2">
+                      {movie?.time || "Đang cập nhật"}
+                    </span>
                   </p>
 
                   <p className="text-gray-300">
                     <span className="font-medium">Trạng thái:</span>
-                    <span className="text-white ml-2">{movie?.status || "Đang cập nhật"}</span>
+                    <span className="text-white ml-2">
+                      {movie?.status || "Đang cập nhật"}
+                    </span>
                   </p>
 
                   <p className="text-gray-300">
                     <span className="font-medium">Chất lượng:</span>
-                    <span className="text-white ml-2">{movie?.quality || "Đang cập nhật"}</span>
+                    <span className="text-white ml-2">
+                      {movie?.quality || "Đang cập nhật"}
+                    </span>
                   </p>
 
                   <p className="flex items-center gap-2">
-                    <FontAwesomeIcon icon={faLanguage} className="text-purple-400 w-5" />
+                    <FontAwesomeIcon
+                      icon={faLanguage}
+                      className="text-purple-400 w-5"
+                    />
                     <span className="font-medium text-gray-300">Ngôn ngữ:</span>
-                    <span className="text-white">{movie?.lang || "Đang cập nhật"}</span>
+                    <span className="text-white">
+                      {movie?.lang || "Đang cập nhật"}
+                    </span>
                   </p>
 
                   <p className="text-gray-300">
@@ -338,21 +375,24 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                     </span>
                   </p>
                   <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-gradient-to-r from-lime-400 to-green-600 text-white font-bold py-1 px-3 md:py-2 md:px-5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-yellow-500/30 transition-all duration-300 text-sm md:text-base cursor-pointer"
-                      onClick={() => {
-                        if (likedMovies.includes(movieDetail?.slug as string)) {
-                          handleUnlikeMovie()
-                          
-                        } else {
-                          handleLikeMovie()
-                        }
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faBookmark} className="text-lg" />
-                      <span>{likedMovies.includes(movieDetail?.slug as string) ? "Xoá khỏi yêu thích" : "Thêm vào yêu thích"}</span>
-                    </motion.button>
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-lime-400 to-green-600 text-white font-bold py-1 px-3 md:py-2 md:px-5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-yellow-500/30 transition-all duration-300 text-sm md:text-base cursor-pointer"
+                    onClick={() => {
+                      if (likedMovies.includes(movieDetail?.slug as string)) {
+                        handleUnlikeMovie();
+                      } else {
+                        handleLikeMovie();
+                      }
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faBookmark} className="text-lg" />
+                    <span>
+                      {likedMovies.includes(movieDetail?.slug as string)
+                        ? "Xoá khỏi yêu thích"
+                        : "Thêm vào yêu thích"}
+                    </span>
+                  </motion.button>
                 </div>
               </div>
 
@@ -361,7 +401,9 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                   Nội dung
                 </h3>
                 <div className="bg-slate-800/40 backdrop-blur-sm p-6 rounded-xl border border-slate-700/50">
-                  <p className="text-gray-200 leading-relaxed">{movie?.content || "Nội dung đang được cập nhật..."}</p>
+                  <p className="text-gray-200 leading-relaxed">
+                    {movie?.content || "Nội dung đang được cập nhật..."}
+                  </p>
                 </div>
               </div>
 
@@ -386,7 +428,9 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-white text-center py-4 bg-slate-700/50 rounded-lg">Đang cập nhật tập mới</div>
+                    <div className="text-white text-center py-4 bg-slate-700/50 rounded-lg">
+                      Đang cập nhật tập mới
+                    </div>
                   )}
                 </div>
               </div>
@@ -395,7 +439,7 @@ const MovieDetailComponent = ({ slug }: { slug: string }) => {
         </motion.div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MovieDetailComponent
+export default MovieDetailComponent;

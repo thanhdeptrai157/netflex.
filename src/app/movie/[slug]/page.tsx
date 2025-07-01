@@ -1,6 +1,6 @@
 import MovieDetailComponent from '@/components/movie-detail';
 import NewUpdateMovie from '@/components/new-update-movie';
-import { fetchMovieDetail } from '@/lib/fetchDetailCategory';
+import { fetchMovieDetail } from '@/lib/fetchDetailMovie';
 import { Metadata } from 'next';
 
 export const generateMetadata = async ({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> => {

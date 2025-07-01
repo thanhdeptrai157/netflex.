@@ -1,9 +1,11 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  eslint: {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+   eslint: {
     ignoreDuringBuilds: true,
+  },
+  images: {
+    domains: ['phimimg.com'],
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

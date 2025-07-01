@@ -1,5 +1,5 @@
 import { getComments, postComment } from '@/services/commentService'
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Comment } from '@/types/comments'
 import { toast } from 'react-toastify'
 import { useUserStore } from '@/stores/userStore'
@@ -24,7 +24,7 @@ export const useComments = (movieSlug: string) => {
                     toast.error("Không thể tải bình luận", { autoClose: 1000 })
                 }
             } catch (error) {
-                toast.error("Có lỗi xảy ra khi tải bình luận", { autoClose: 1000 })
+                toast.error("Có lỗi xảy ra khi tải bình luận" + (error instanceof Error ? `: ${error.message}` : ""), { autoClose: 1000 })
             } finally {
                 setIsLoading(false)
             }
@@ -58,7 +58,7 @@ export const useComments = (movieSlug: string) => {
                 toast.success("Bình luận của bạn đã được đăng.", { autoClose: 1000 })
             }
         } catch (error) {
-            toast.error("Có lỗi xảy ra khi đăng bình luận", { autoClose: 1000 })
+            toast.error("Có lỗi xảy ra khi đăng bình luận" + (error instanceof Error ? `: ${error.message}` : ""), { autoClose: 1000 })
         } finally {
             setIsPosting(false)
         }

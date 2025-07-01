@@ -6,6 +6,7 @@ import { Clock, Film, Play } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Pagination from "@/components/pagination"
+import {MovieDetail } from "@/types/movie"
 
 const MAX_ITEM = 6;
 
@@ -72,7 +73,7 @@ const WatchedProgress = ({ uid }: { uid: string }) => {
             ) : (
                 <>
                 <div className="grid gap-4 sm:grid-cols-1 xl:grid-cols-2 ">
-                    {pagedData.map((movie: any) => {
+                    {pagedData.map((movie: { movie: MovieDetail }) => {
                         const progress = watchedProgress[movie.movie.slug] || {}
                         return (
                             <div

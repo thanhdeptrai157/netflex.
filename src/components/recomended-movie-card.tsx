@@ -1,7 +1,8 @@
 "use client"
 
 import type { MovieDetail } from "@/types/movie"
-import { Info, Star } from "lucide-react"
+import { Info} from "lucide-react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 
 
@@ -17,7 +18,7 @@ const RecommendedMovieCard = ({ movie }: { movie: MovieDetail }) => {
       onClick={() => onSelect(movie)}
     >
       <div className="relative h-40 sm:h-48 overflow-hidden">
-        <img
+        <Image
           src={movie.thumb_url || movie.poster_url}
           alt={movie.name}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
