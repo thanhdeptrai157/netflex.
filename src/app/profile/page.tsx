@@ -276,7 +276,7 @@ const ProfilePage = () => {
                   transition={{ duration: 0.3 }}
                   className={`${activeTab === "watched" ? "block" : "hidden"} w-full`}
                 >
-                  <LikedMoviesSection likedMovies={likedMovies} uid={user.uid} />
+                  <LikedMoviesSection likedMovies={likedMovies}/>
                 </motion.div>
 
                 <motion.div
