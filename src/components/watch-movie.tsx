@@ -113,25 +113,24 @@ const LoadMovie = ({ slug }: { slug: string }) => {
         });
     };
 
-    // ép android dùng native
-    if (/Android/i.test(navigator.userAgent)) {
-      video.src = link;
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = link;
-    } else {
+    if (Hls.isSupported()) {
       hls = new Hls({
         enableWorker: true,
-        lowLatencyMode: false,
+        lowLatencyMode: true,
         maxBufferLength: 60,
         maxMaxBufferLength: 120,
         liveSyncDurationCount: 3,
       });
+
       hls.loadSource(link);
       hls.attachMedia(video);
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = link;
+    } else {
+      console.error("Không hỗ trợ HLS trên thiết bị này.");
     }
 
     video.addEventListener("loadedmetadata", onLoadedMetadata);
-
     const interval = setInterval(() => {
       if (video.readyState >= 1 && !video.paused && !video.seeking) {
         setCurrentTime(video.currentTime);
